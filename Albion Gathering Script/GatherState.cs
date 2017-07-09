@@ -53,12 +53,12 @@ namespace Ennui.Script.Official
 
         private IMobObject Closest(Vector3<float> center, List<IMobObject> mobs)
         {
-            var dist = 2147000000.0f;
+            var dist = 0.0f;
             IMobObject closest = null;
             foreach (var m in mobs)
             {
                 var cdist = m.ThreadSafeLocation.SimpleDistance(center);
-                if (cdist < dist)
+                if (closest == null || cdist < dist)
                 {
                     dist = cdist;
                     closest = m;
@@ -83,8 +83,7 @@ namespace Ennui.Script.Official
                 var tArea = new Area(tBegin, tEnd);
                 territoryAreas.Add(tArea);
             }
-
-            //find mob target
+            
             if (config.AttackMobs)
             {
                 var lpo = Players.LocalPlayer;
@@ -106,8 +105,7 @@ namespace Ennui.Script.Official
                     }
                 }
             }
-
-            // find resource target
+            
             harvestableTarget = Objects
                 .HarvestableChain
                 .FilterDepleted()
@@ -115,8 +113,7 @@ namespace Ennui.Script.Official
                 .ExcludeByArea(territoryAreas.ToArray())
                 .FilterByTypeSet(config.TypeSetsToUse.ToArray())
                 .Closest(center);
-
-            //if we found both types of target, decide which one to use
+            
             if (mobTarget != null && harvestableTarget != null)
             {
                 var mobDist = mobTarget.ThreadSafeLocation.SimpleDistance(center);
@@ -203,8 +200,7 @@ namespace Ennui.Script.Official
                         {
                             return false;
                         }
-
-
+                        
                         return FindResource(localLoc);
                     });
                     return 5000;
@@ -219,18 +215,15 @@ namespace Ennui.Script.Official
                 if (area.Contains(localLocation))
                 {
                     Logging.Log("in gather area");
-
-
+                    
                     if (localPlayer.IsMounted)
                     {
                         localPlayer.ToggleMount(false);
                     }
-
-
+                    
                     Logging.Log(string.Format("attempting to gather {0}", gatherAttempts));
                     harvestableTarget.Click();
-
-
+                    
                     Time.SleepUntil(() =>
                     {
                         return localPlayer.IsHarvesting;
@@ -240,8 +233,7 @@ namespace Ennui.Script.Official
                     {
                         gatherAttempts = gatherAttempts + 1;
                     }
-
-
+                    
                     return 100;
                 }
                 else
@@ -263,8 +255,7 @@ namespace Ennui.Script.Official
             else if (mobTarget != null)
             {
                 Logging.Log("Gather mob begin");
-
-
+                
                 var mobGatherArea = mobTarget.ThreadSafeLocation.Expand(3, 3, 3);
                 if (mobGatherArea.Contains(localLocation))
                 {
@@ -290,8 +281,7 @@ namespace Ennui.Script.Official
                     {
                         gatherAttempts = gatherAttempts + 1;
                     }
-
-
+                    
                     return 100;
                 }
                 else
@@ -300,8 +290,7 @@ namespace Ennui.Script.Official
                     config.ClusterName = this.config.ResourceClusterName;
                     config.UseWeb = false;
                     config.Point = mobTarget.ThreadSafeLocation;
-
-
+                    
                     if (Movement.PathFindTo(config) == PathFindResult.Failed)
                     {
                         blacklist.Add(mobTarget.Id);
