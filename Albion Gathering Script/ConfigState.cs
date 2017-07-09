@@ -59,21 +59,20 @@ namespace Ennui.Script.Official
             foreach (var tierGroup in tierGroups)
             {
                 var tierGroupsBroken = tierGroup.Split('.');
-                var size = tierGroupsBroken.Length;
 
                 var minTier = 0;
                 var maxTier = 0;
                 var minRarity = 0;
                 var maxRarity = 10;
-                if (size > 0)
+                if (tierGroupsBroken.Length > 0)
                 {
-                    minTier = int.Parse(tierGroupsBroken[1]);
-                    maxTier = int.Parse(tierGroupsBroken[1]);
+                    minTier = int.Parse(tierGroupsBroken[0]);
+                    maxTier = int.Parse(tierGroupsBroken[0]);
 
-                    if (size == 2)
+                    if (tierGroupsBroken.Length == 2)
                     {
-                        minRarity = int.Parse(tierGroupsBroken[2]);
-                        maxRarity = int.Parse(tierGroupsBroken[2]);
+                        minRarity = int.Parse(tierGroupsBroken[1]);
+                        maxRarity = int.Parse(tierGroupsBroken[1]);
                     }
                 }
                 
@@ -90,26 +89,22 @@ namespace Ennui.Script.Official
             {
                 AddTiers(ResourceType.Wood, harvestWoodInput.GetText());
             }
-
-
+            
             if (harvestOreCheckBox.IsSelected())
             {
                 AddTiers(ResourceType.Ore, harvestOreInput.GetText());
             }
-
-
+            
             if (harvestFiberCheckBox.IsSelected())
             {
                 AddTiers(ResourceType.Fiber, harvestFiberInput.GetText());
             }
-
-
+            
             if (harvestHideCheckBox.IsSelected())
             {
                 AddTiers(ResourceType.Hide, harvestHideInput.GetText());
             }
-
-
+            
             if (harvestStoneCheckBox.IsSelected())
             {
                 AddTiers(ResourceType.Rock, harvestStoneInput.GetText());
@@ -200,7 +195,6 @@ namespace Ennui.Script.Official
                 harvestHideCheckBox.SetText("Harvest Hide");
                 harvestHideCheckBox.SetSelected(true);
 
-
                 harvestStoneInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestStoneInput);
                 harvestStoneInput.SetPosition(-60, 30, 0);
@@ -213,34 +207,34 @@ namespace Ennui.Script.Official
                 harvestStoneCheckBox.SetText("Harvest Rock");
                 harvestStoneCheckBox.SetSelected(true);
 
-                killMobsCheckBox = Factories.CreateGuiCheckBox();
-                primaryPanel.Add(killMobsCheckBox);
-                killMobsCheckBox.SetPosition(0, -10, 0);
-                killMobsCheckBox.SetSize(125, 25);
-                killMobsCheckBox.SetText("Kill Mobs");
-                killMobsCheckBox.SetSelected(true);
-
                 resourceClusterLabel = Factories.CreateGuiLabel();
                 primaryPanel.Add(resourceClusterLabel);
-                resourceClusterLabel.SetPosition(-70, -40, 0);
+                resourceClusterLabel.SetPosition(-70, -10, 0);
                 resourceClusterLabel.SetSize(120, 25);
                 resourceClusterLabel.SetText("Resource Cluster");
 
                 resourceClusterInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(resourceClusterInput);
-                resourceClusterInput.SetPosition(-70, -65, 0);
+                resourceClusterInput.SetPosition(-70, -35, 0);
                 resourceClusterInput.SetSize(120, 25);
 
                 cityClusterLabel = Factories.CreateGuiLabel();
                 primaryPanel.Add(cityClusterLabel);
-                cityClusterLabel.SetPosition(70, -40, 0);
+                cityClusterLabel.SetPosition(70, -10, 0);
                 cityClusterLabel.SetSize(120, 25);
                 cityClusterLabel.SetText("City Cluster");
 
                 cityClusterInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(cityClusterInput);
-                cityClusterInput.SetPosition(70, -65, 0);
+                cityClusterInput.SetPosition(70, -35, 0);
                 cityClusterInput.SetSize(120, 25);
+
+                killMobsCheckBox = Factories.CreateGuiCheckBox();
+                primaryPanel.Add(killMobsCheckBox);
+                killMobsCheckBox.SetPosition(0, -65, 0);
+                killMobsCheckBox.SetSize(125, 25);
+                killMobsCheckBox.SetText("Kill Mobs");
+                killMobsCheckBox.SetSelected(true);
 
                 autoLoginCheckbox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(autoLoginCheckbox);
@@ -268,6 +262,7 @@ namespace Ennui.Script.Official
 
                 runButton.AddActionListener((e) =>
                 {
+                    Logging.Log("trace 1", LogLevel.Trace);
                     SelectedStart();
                 });
 
