@@ -18,6 +18,7 @@ namespace Ennui.Script.Official
             AddState("config", new ConfigState(config));
             AddState("resolve", new ResolveState(config));
             AddState("gather", new GatherState(config));
+            AddState("combat", new CombatState(config));
             AddState("repair", new RepairState(config));
             AddState("bank", new BankState(config));
             EnterState("config");

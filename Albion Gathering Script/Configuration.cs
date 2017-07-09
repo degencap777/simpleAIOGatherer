@@ -1,10 +1,6 @@
 ﻿using Ennui.Api;
 using Ennui.Api.Builder;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ennui.Script.Official
 {
@@ -19,7 +15,10 @@ namespace Ennui.Script.Official
 
         public string LoginCharacterName { get; set; } = "";
         public int GatherAttemptsTimeout { get; set; } = 6;
+
         public bool AttackMobs { get; set; } = false;
+        public bool IgnoreMobsOnLowHealth { get; set; } = true;
+        public int IgnoreMobHealthPercent { get; set; } = 60;
 
         public List<TypeSet> TypeSetsToUse { get; set; } = new List<TypeSet>();
     }
