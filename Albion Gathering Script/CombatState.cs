@@ -3,14 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ennui.Script.Official
 {
-    public class BankState : StateScript
+    public class CombatState : StateScript
     {
         private Configuration config;
 
-        public BankState(Configuration config)
+        public CombatState(Configuration config)
         {
             this.config = config;
         }
