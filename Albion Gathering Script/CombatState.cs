@@ -51,8 +51,7 @@ namespace Ennui.Script.Official
             {
                 self.CastAt(crowdControlSpell.Slot, target.ThreadSafeLocation);
             }
-
-
+            
             if (self.HealthPercentage <= 50)
             {
                 var healSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Heal).First;
@@ -74,12 +73,14 @@ namespace Ennui.Script.Official
             var localPlayer = Players.LocalPlayer;
             if (localPlayer == null)
             {
+                Logging.Log("Failed to find local player!", LogLevel.Warning);
                 return 100;
             }
 
             if (config.FleeOnLowHealth && localPlayer.HealthPercentage <= config.FleeHealthPercent)
             {
                 parent.EnterState("bank");
+                return 0;
             }
 
             if (localPlayer.IsMounted)
