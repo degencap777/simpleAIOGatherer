@@ -16,36 +16,40 @@ namespace Ennui.Script.Official
         public override int OnLoop(IScriptEngine se)
         {
             var localPlayer = Players.LocalPlayer;
-            if (localPlayer != null)
+            if (localPlayer == null)
             {
-                if (!config.RepairArea.Contains(localPlayer.ThreadSafeLocation))
-                {
-                    var config = new PointPathFindConfig();
-                    config.ClusterName = this.config.CityClusterName;
-                    config.UseWeb = false;
-                    config.Point = this.config.RepairDest;
-                    Movement.PathFindTo(config);
-                    return 0;
-                }
+                Logging.Log("Failed to find local player!", LogLevel.Warning);
+                return 10_000;
+            }
 
-                if (localPlayer.IsMounted)
-                {
-                    localPlayer.ToggleMount();
-                }
-
-                if (!Inventory.HasBrokenItems(70))
-                {
-                    if (localPlayer.WeighedDownPercent >= 90)
-                    {
-                        parent.EnterState("bank");
-                    }
-                    else
-                    {
-                        parent.EnterState("gather");
-                    }
-                }
+            if (!config.RepairArea.Contains(localPlayer.ThreadSafeLocation))
+            {
+                var config = new PointPathFindConfig();
+                config.ClusterName = this.config.CityClusterName;
+                config.UseWeb = false;
+                config.Point = this.config.RepairDest;
+                Movement.PathFindTo(config);
                 return 0;
             }
+
+            if (localPlayer.IsMounted)
+            {
+                localPlayer.ToggleMount();
+            }
+
+            if (!Inventory.HasBrokenItems(70))
+            {
+                if (localPlayer.WeighedDownPercent >= 90)
+                {
+                    parent.EnterState("bank");
+                }
+                else
+                {
+                    parent.EnterState("gather");
+                }
+            }
+            return 0;
+
 
             if (!RepairWindow.IsOpen)
             {
