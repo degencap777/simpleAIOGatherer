@@ -1,9 +1,5 @@
 ﻿using Ennui.Api;
 using Ennui.Api.Script;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ennui.Script.Official
 {
@@ -18,7 +14,7 @@ namespace Ennui.Script.Official
 
         public override int OnLoop(IScriptEngine se)
         {
-            /*Time.SleepUntil(() => !Game.InLoadingScreen, 30000);
+            Time.SleepUntil(() => !Game.InLoadingScreen, 30000);
             if (Game.InLoadingScreen)
             {
                 Logging.Log("In loading screen too long, exiting script...", LogLevel.Error);
@@ -45,9 +41,7 @@ namespace Ennui.Script.Official
             }
 
             Logging.Log("Failed to resolve state, trying again later...", LogLevel.Warning);
-            return 10_000;*/
-            parent.EnterState("gather");
-            return 0;
+            return 10_000;
         }
     }
 }
