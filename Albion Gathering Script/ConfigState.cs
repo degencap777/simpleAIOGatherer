@@ -129,6 +129,8 @@ namespace Ennui.Script.Official
             {
                 config.LoginCharacterName = characterNameInput.GetText();
             }
+
+            parent.EnterState("resolve");
         }
 
         public override bool OnStart(IScriptEngine se)

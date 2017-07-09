@@ -16,7 +16,10 @@ namespace Ennui.Script.Official
             timer = new Timer();
 
             AddState("config", new ConfigState(config));
+            AddState("resolve", new ResolveState(config));
             AddState("gather", new GatherState(config));
+            AddState("repair", new RepairState(config));
+            AddState("bank", new BankState(config));
             EnterState("config");
             return base.OnStart(se);
         }

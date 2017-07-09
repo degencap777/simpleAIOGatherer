@@ -113,12 +113,12 @@ namespace Ennui.Script.Official
                 return 0;
             }
 
-
             if (NeedsNew())
             {
 
             }
-            return 1000;
+
+            return 100;
         }
     }
 }

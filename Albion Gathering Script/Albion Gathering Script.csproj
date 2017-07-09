@@ -44,12 +44,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BankState.cs" />
     <Compile Include="ConfigState.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="EquipmentUtils.cs" />
     <Compile Include="GatheringScript.cs" />
     <Compile Include="GatherState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepairState.cs" />
+    <Compile Include="ResolveState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
