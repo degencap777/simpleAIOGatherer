@@ -30,8 +30,8 @@ namespace Ennui.Script.Official
             g.FillRect(15, 100, 300, 165);
             g.SetColor(new Color(0.95f, 0.5f, 0.0f, 1.0f));
             g.DrawString("http://ennui.ninja - Simple AIO Gatherer", 20, 100);
-            g.DrawString(string.Format("Runtime: %s", Time.FormatElapsed(timer.ElapsedMs)), 20, 115);
-            g.DrawString(string.Format("State: %s", RunningKey), 20, 130);
+            g.DrawString(string.Format("Runtime: {0}", Time.FormatElapsed(timer.ElapsedMs)), 20, 115);
+            g.DrawString(string.Format("State: {0}", RunningKey), 20, 130);
         }
     }
 }
