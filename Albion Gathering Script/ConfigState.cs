@@ -1,5 +1,7 @@
 ﻿using Ennui.Api;
+using Ennui.Api.Builder;
 using Ennui.Api.Gui;
+using Ennui.Api.Meta;
 using Ennui.Api.Script;
 using System;
 using System.Collections.Generic;
@@ -46,53 +48,87 @@ namespace Ennui.Script.Official
             this.config = config;
         }
 
+        private void AddTiers(ResourceType type, string input)
+        {
+            if (input.Length == 0)
+            {
+                return;
+            }
+            
+            var tierGroups = input.Replace(" ", "").Split(',');
+            foreach (var tierGroup in tierGroups)
+            {
+                var tierGroupsBroken = tierGroup.Split('.');
+                var size = tierGroupsBroken.Length;
+
+                var minTier = 0;
+                var maxTier = 0;
+                var minRarity = 0;
+                var maxRarity = 10;
+                if (size > 0)
+                {
+                    minTier = int.Parse(tierGroupsBroken[1]);
+                    maxTier = int.Parse(tierGroupsBroken[1]);
+
+                    if (size == 2)
+                    {
+                        minRarity = int.Parse(tierGroupsBroken[2]);
+                        maxRarity = int.Parse(tierGroupsBroken[2]);
+                    }
+                }
+                
+                config.TypeSetsToUse.Add(new TypeSet(minTier, maxTier, type, minRarity, maxRarity));
+            }
+        }
+
         private void SelectedStart()
         {
-            /*cityClusterName = cityClusterInput:getText()
-  resourceClusterName = resourceClusterInput:getText()
+            config.CityClusterName = cityClusterInput.GetText();
+            config.ResourceClusterName = resourceClusterInput.GetText();
+
+            if (harvestWoodCheckBox.IsSelected())
+            {
+                AddTiers(ResourceType.Wood, harvestWoodInput.GetText());
+            }
 
 
-  if harvestWoodCheckBox:isSelected() then
-    addTiers(resourceType.Wood, harvestWoodInput: getText())
-  end
+            if (harvestOreCheckBox.IsSelected())
+            {
+                AddTiers(ResourceType.Ore, harvestOreInput.GetText());
+            }
 
 
-  if harvestOreCheckBox:isSelected() then
-    addTiers(resourceType.Ore, harvestOreInput: getText())
-  end
+            if (harvestFiberCheckBox.IsSelected())
+            {
+                AddTiers(ResourceType.Fiber, harvestFiberInput.GetText());
+            }
 
 
-  if harvestFiberCheckBox:isSelected() then
-    addTiers(resourceType.Fiber, harvestFiberInput: getText())
-  end
+            if (harvestHideCheckBox.IsSelected())
+            {
+                AddTiers(ResourceType.Hide, harvestHideInput.GetText());
+            }
 
 
-  if harvestHideCheckBox:isSelected() then
-    addTiers(resourceType.Hide, harvestHideInput: getText())
-  end
+            if (harvestStoneCheckBox.IsSelected())
+            {
+                AddTiers(ResourceType.Rock, harvestStoneInput.GetText());
+            }
 
+            config.AttackMobs = killMobsCheckBox.IsSelected();
 
-  if harvestStoneCheckBox:isSelected() then
-    addTiers(resourceType.Rock, harvestStoneInput: getText())
-  end
+            UI.InputEnabled = true;
+            Hotkeys.Rehook();
+            primaryPanel.Destroy();
 
-  attackMobs = killMobsCheckBox:isSelected()
-  useWeb = useWebCheckBox:isSelected()
+            config.VaultArea = new MapArea(Api, config.CityClusterName, new Vector3f(288, -8, 296), new Vector3f(302, 0, 307));
+            config.RepairArea = new MapArea(Api, config.CityClusterName, new Vector3f(306, -8, 314), new Vector3f(316, 0, 326));
+            config.GatherArea = new MapArea(Api, config.ResourceClusterName, new Vector3f(-10000, -10000, -10000), new Vector3f(10000, 10000, 10000));
 
-
-  ui.inputEnabled = true
-  hotkeys: rehook()
-  primaryPanel: destroy()
-
-
-  vaultArea = mapArea.new(cityClusterName, vector3.new(288, -8, 296), vector3.new(302, 0, 307))
-  repairArea = mapArea.new(cityClusterName, vector3.new(306, -8, 314), vector3.new(316, 0, 326))
-  gatherArea = mapArea.new(resourceClusterName, vector3.new(- 10000, -10000, -10000), vector3.new(10000, 10000, 10000))
-  
-  if autoLoginCheckbox:isSelected() then
-    loginCharacterName = characterNameInput:getText()
-    table.insert(hooks, loginHook)
-  end*/
+            if (autoLoginCheckbox.IsSelected())
+            {
+                config.LoginCharacterName = characterNameInput.GetText();
+            }
         }
 
         public override bool OnStart(IScriptEngine se)
@@ -113,7 +149,7 @@ namespace Ennui.Script.Official
                 tierLabel.SetPosition(-60, 175, 0);
                 tierLabel.SetSize(100, 25);
                 tierLabel.SetText("Tier");
-                
+
                 harvestWoodInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestWoodInput);
                 harvestWoodInput.SetPosition(-60, 150, 0);
@@ -125,36 +161,36 @@ namespace Ennui.Script.Official
                 harvestWoodCheckBox.SetSize(100, 25);
                 harvestWoodCheckBox.SetText("Harvest Wood");
                 harvestWoodCheckBox.SetSelected(true);
-                
+
                 harvestOreInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestOreInput);
                 harvestOreInput.SetPosition(-60, 120, 0);
                 harvestOreInput.SetSize(100, 25);
-                
+
                 harvestOreCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestOreCheckBox);
                 harvestOreCheckBox.SetPosition(60, 120, 0);
                 harvestOreCheckBox.SetSize(100, 25);
                 harvestOreCheckBox.SetText("Harvest Ore");
                 harvestOreCheckBox.SetSelected(true);
-                
+
                 harvestFiberInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestFiberInput);
                 harvestFiberInput.SetPosition(-60, 90, 0);
                 harvestFiberInput.SetSize(100, 25);
-                
+
                 harvestFiberCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestFiberCheckBox);
                 harvestFiberCheckBox.SetPosition(60, 90, 0);
                 harvestFiberCheckBox.SetSize(100, 25);
                 harvestFiberCheckBox.SetText("Harvest Fiber");
                 harvestFiberCheckBox.SetSelected(true);
-                
+
                 harvestHideInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestHideInput);
                 harvestHideInput.SetPosition(-60, 60, 0);
                 harvestHideInput.SetSize(100, 25);
-                
+
                 harvestHideCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestHideCheckBox);
                 harvestHideCheckBox.SetPosition(60, 60, 0);
@@ -167,56 +203,56 @@ namespace Ennui.Script.Official
                 primaryPanel.Add(harvestStoneInput);
                 harvestStoneInput.SetPosition(-60, 30, 0);
                 harvestStoneInput.SetSize(100, 25);
-                
+
                 harvestStoneCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestStoneCheckBox);
                 harvestStoneCheckBox.SetPosition(60, 30, 0);
                 harvestStoneCheckBox.SetSize(100, 25);
                 harvestStoneCheckBox.SetText("Harvest Rock");
                 harvestStoneCheckBox.SetSelected(true);
-                
+
                 killMobsCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(killMobsCheckBox);
                 killMobsCheckBox.SetPosition(0, -10, 0);
                 killMobsCheckBox.SetSize(125, 25);
                 killMobsCheckBox.SetText("Kill Mobs");
                 killMobsCheckBox.SetSelected(true);
-                
+
                 resourceClusterLabel = Factories.CreateGuiLabel();
                 primaryPanel.Add(resourceClusterLabel);
                 resourceClusterLabel.SetPosition(-70, -40, 0);
                 resourceClusterLabel.SetSize(120, 25);
                 resourceClusterLabel.SetText("Resource Cluster");
-                
+
                 resourceClusterInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(resourceClusterInput);
                 resourceClusterInput.SetPosition(-70, -65, 0);
                 resourceClusterInput.SetSize(120, 25);
-                
+
                 cityClusterLabel = Factories.CreateGuiLabel();
                 primaryPanel.Add(cityClusterLabel);
                 cityClusterLabel.SetPosition(70, -40, 0);
                 cityClusterLabel.SetSize(120, 25);
                 cityClusterLabel.SetText("City Cluster");
-                
+
                 cityClusterInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(cityClusterInput);
                 cityClusterInput.SetPosition(70, -65, 0);
                 cityClusterInput.SetSize(120, 25);
-                
+
                 autoLoginCheckbox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(autoLoginCheckbox);
                 autoLoginCheckbox.SetPosition(0, -100, 0);
                 autoLoginCheckbox.SetSize(125, 25);
                 autoLoginCheckbox.SetText("Auto Relogin");
                 autoLoginCheckbox.SetSelected(true);
-                
+
                 characterNameLabel = Factories.CreateGuiLabel();
                 primaryPanel.Add(characterNameLabel);
                 characterNameLabel.SetPosition(0, -125, 0);
                 characterNameLabel.SetSize(125, 25);
                 characterNameLabel.SetText("Character Name");
-                
+
                 characterNameInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(characterNameInput);
                 characterNameInput.SetPosition(0, -145, 0);

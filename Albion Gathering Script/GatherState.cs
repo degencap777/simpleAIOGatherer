@@ -85,7 +85,7 @@ namespace Ennui.Script.Official
 
                 var moveConfig = new PointPathFindConfig();
                 moveConfig.UseWeb = false;
-                moveConfig.ClusterName = config.GatherClusterName;
+                moveConfig.ClusterName = config.ResourceClusterName;
                 if (Movement.PathFindTo(moveConfig) != PathFindResult.Success)
                 {
                     Logging.Log("Local player failed to find path to resource area!", LogLevel.Error);
