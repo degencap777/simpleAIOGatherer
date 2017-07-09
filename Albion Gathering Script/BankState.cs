@@ -29,19 +29,16 @@ namespace Ennui.Script.Official
                     config.ClusterName = this.config.CityClusterName;
                     config.UseWeb = false;
                     config.Point = this.config.VaultDest;
-
-
+                    
                     Movement.PathFindTo(config);
                     return 0;
                 }
-
-
+                
                 if (config.FleeOnLowHealth && localPlayer.HealthPercentage <= config.FleeHealthPercent)
                 {
                     return 1000;
                 }
-
-
+                
                 if (!Banking.IsOpen)
                 {
                     var bank = Objects.BankChain.Closest(localPlayer.ThreadSafeLocation);
@@ -57,13 +54,10 @@ namespace Ennui.Script.Official
                         return Banking.IsOpen;
                     }, 4000);
                 }
-
-
+                
                 if (Banking.IsOpen)
                 {
                     var beginWeight = localPlayer.WeighedDownPercent;
-
-
                     var allItems = Inventory.GetItemsBySubstring("_ROCK", "_ORE", "_HIDE", "_WOOD", "_FIBER");
                     var toDeposit = new List<IItemStack>();
                     foreach (var stack in allItems)
@@ -76,7 +70,6 @@ namespace Ennui.Script.Official
                     
                     if (toDeposit.Count == 0 || Banking.Deposit(toDeposit.ToArray()))
                     {
-
                         if (localPlayer.TotalHoldWeight < 99)
                         {
                             if (Inventory.HasBrokenItems(70))
