@@ -214,8 +214,7 @@ namespace Ennui.Script.Official
             if (harvestableTarget != null)
             {
                 Logging.Log("Gather resource begin");
-
-
+                
                 var area = harvestableTarget.InteractBounds;
                 if (area.Contains(localLocation))
                 {
@@ -251,8 +250,7 @@ namespace Ennui.Script.Official
                     config.ClusterName = this.config.ResourceClusterName;
                     config.UseWeb = false;
                     config.Target = harvestableTarget;
-
-
+                    
                     var result = Movement.PathFindTo(config);
                     if (result == PathFindResult.Failed)
                     {
