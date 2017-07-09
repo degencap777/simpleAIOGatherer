@@ -75,7 +75,9 @@ namespace Ennui.Script.Official
                         maxRarity = int.Parse(tierGroupsBroken[1]);
                     }
                 }
-                
+
+                Logging.Log("Adding tier " + type + " " + minTier + "-" + maxTier + " " + minRarity + "-" + maxRarity);
+
                 config.TypeSetsToUse.Add(new TypeSet(minTier, maxTier, type, minRarity, maxRarity));
             }
         }
