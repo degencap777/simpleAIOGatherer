@@ -259,7 +259,6 @@ namespace Ennui.Script.Official
 
                 runButton.AddActionListener((e) =>
                 {
-                    Logging.Log("trace 1", LogLevel.Trace);
                     SelectedStart();
                 });
 
