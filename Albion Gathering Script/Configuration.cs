@@ -12,6 +12,7 @@ namespace Ennui.Script.Official
         public IArea<float> GatherArea { get; set; }
         public IArea<float> VaultArea { get; set; }
         public IArea<float> RepairArea { get; set; }
+        public Vector3<float> RepairDest { get; set; }
 
         public string LoginCharacterName { get; set; } = "";
         public int GatherAttemptsTimeout { get; set; } = 6;
