@@ -22,7 +22,6 @@ namespace Ennui.Script.Official
         private ICheckBox harvestStoneCheckBox;
 
         private ICheckBox killMobsCheckBox;
-        private ICheckBox useWebCheckBox;
 
         private ILabel resourceClusterLabel;
         private IInputField resourceClusterInput;
