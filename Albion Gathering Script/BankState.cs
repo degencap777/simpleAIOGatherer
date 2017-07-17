@@ -33,6 +33,7 @@ namespace Ennui.Script.Official
                 config.ClusterName = this.config.CityClusterName;
                 config.UseWeb = false;
                 config.Point = this.config.VaultDest;
+                config.UseMount = true;
 
                 Movement.PathFindTo(config);
                 return 0;
@@ -76,7 +77,7 @@ namespace Ennui.Script.Official
                 {
                     if (localPlayer.TotalHoldWeight < 99)
                     {
-                        if (Inventory.HasBrokenItems(70))
+                        if (config.RepairDest != null && Inventory.HasBrokenItems(70))
                         {
                             parent.EnterState("repair");
                         }

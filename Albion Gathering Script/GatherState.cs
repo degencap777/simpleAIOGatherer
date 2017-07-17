@@ -2,6 +2,7 @@
 using Ennui.Api.Direct.Object;
 using Ennui.Api.Method;
 using Ennui.Api.Script;
+using System;
 using System.Collections.Generic;
 
 namespace Ennui.Script.Official
@@ -45,6 +46,14 @@ namespace Ennui.Script.Official
 
             if (gatherAttempts >= config.GatherAttemptsTimeout)
             {
+                if (harvestableTarget != null)
+                {
+                    blacklist.Add(harvestableTarget.Id);
+                }
+                if (mobTarget != null)
+                {
+                    blacklist.Add(mobTarget.Id);
+                }
                 return true;
             }
 
@@ -90,11 +99,13 @@ namespace Ennui.Script.Official
                 if (lpo != null && config.IgnoreMobsOnLowHealth && lpo.HealthPercentage > config.IgnoreMobHealthPercent)
                 {
                     var resourceMobs = new List<IMobObject>();
-                    foreach (var ent in Entities.MobChain.ExcludeByArea(territoryAreas.ToArray()).AsList)
+                    foreach (var ent in Entities.MobChain.ExcludeByArea(territoryAreas.ToArray()).ExcludeWithIds(blacklist.ToArray()).AsList)
                     {
                         var drops = ent.HarvestableDropChain.FilterByTypeSet(config.TypeSetsToUse.ToArray()).AsList;
+                        Logging.Log(drops.ToString());
                         if (drops.Count > 0)
                         {
+                            
                             resourceMobs.Add(ent);
                         }
                     }
@@ -133,7 +144,7 @@ namespace Ennui.Script.Official
 
         public override int OnLoop(IScriptEngine se)
         {
-            if (Api.HasBrokenItems())
+            if (config.RepairDest != null && Api.HasBrokenItems())
             {
                 parent.EnterState("repair");
                 return 0;
@@ -180,8 +191,9 @@ namespace Ennui.Script.Official
                 weightThreshold = 450;
             }
 
+            var heldWeight = localPlayer.WeighedDownPercent;
             Logging.Log("Weight threshold: " + weightThreshold, LogLevel.Atom);
-            if (localPlayer.WeighedDownPercent >= weightThreshold)
+            if (heldWeight >= weightThreshold)
             {
                 Logging.Log("Local player has too much weight, banking!", LogLevel.Atom);
                 parent.EnterState("bank");
@@ -193,16 +205,34 @@ namespace Ennui.Script.Official
                 if (!FindResource(localLocation))
                 {
                     Logging.Log("failed to find resource");
-                    Movement.PathRandomly(config.ResourceClusterName, () =>
+                    if (config.RoamPoints.Count == 0)
                     {
-                        var localLoc = Players.LocalLocation;
-                        if (localLoc == null)
+                        Logging.Log("Cannot roam as roam points were not added!");
+                        return 15000;
+                    }
+
+                    var rand = new Random();
+                    var point = config.RoamPoints[rand.Next(config.RoamPoints.Count)];
+                    var moveConfig = new PointPathFindConfig();
+                    moveConfig.UseWeb = false;
+                    moveConfig.ClusterName = config.ResourceClusterName;
+                    moveConfig.Point = point;
+                    moveConfig.UseMount = true;
+                    moveConfig.ExitHook = (() =>
+                    {
+                        var local = Players.LocalPlayer;
+                        if (local != null)
                         {
-                            return false;
+                            return FindResource(local.ThreadSafeLocation);
                         }
-                        
-                        return FindResource(localLoc);
+                        return false;
                     });
+
+                    if (Movement.PathFindTo(moveConfig) != PathFindResult.Success)
+                    {
+                        Logging.Log("Local player failed to find path to roam point!", LogLevel.Error);
+                        return 10_000;
+                    }
                     return 5000;
                 }
             }
@@ -238,11 +268,28 @@ namespace Ennui.Script.Official
                 }
                 else
                 {
+                    var useMount = false;
+                    if (heldWeight >= 100 && localLocation.SimpleDistance(harvestableTarget.ThreadSafeLocation) >= 6)
+                    {
+                        useMount = true;
+                    }
+
+                    if (heldWeight >= 120 && localLocation.SimpleDistance(harvestableTarget.ThreadSafeLocation) >= 3)
+                    {
+                        useMount = true;
+                    }
+
+                    if (heldWeight >= 135)
+                    {
+                        useMount = true;
+                    }
+
                     var config = new ResourcePathFindConfig();
                     config.ClusterName = this.config.ResourceClusterName;
                     config.UseWeb = false;
                     config.Target = harvestableTarget;
-                    
+                    config.UseMount = useMount;
+
                     var result = Movement.PathFindTo(config);
                     if (result == PathFindResult.Failed)
                     {
@@ -286,6 +333,7 @@ namespace Ennui.Script.Official
                 }
                 else
                 {
+
                     var config = new PointPathFindConfig();
                     config.ClusterName = this.config.ResourceClusterName;
                     config.UseWeb = false;

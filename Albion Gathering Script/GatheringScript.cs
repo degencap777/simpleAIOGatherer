@@ -28,7 +28,7 @@ namespace Ennui.Script.Official
         public override void OnPaint(IScriptEngine se, GraphicContext g)
         {
             g.SetColor(new Color(0.3f, 0.3f, 0.3f, 1.0f));
-            g.FillRect(15, 100, 300, 165);
+            g.FillRect(15, 100, 265, 145);
             g.SetColor(new Color(0.95f, 0.5f, 0.0f, 1.0f));
             g.DrawString("http://ennui.ninja - Simple AIO Gatherer", 20, 100);
             g.DrawString(string.Format("Runtime: {0}", Time.FormatElapsed(timer.ElapsedMs)), 20, 115);

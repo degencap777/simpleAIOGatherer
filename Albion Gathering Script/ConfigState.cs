@@ -34,6 +34,10 @@ namespace Ennui.Script.Official
         private ILabel characterNameLabel;
         private IInputField characterNameInput;
 
+        private IButton setVaultAreaButton;
+        private IButton setRepairAreaButton;
+        private IButton addRoamPointButton;
+
         private IButton runButton;
 
         private Configuration config;
@@ -108,13 +112,9 @@ namespace Ennui.Script.Official
             }
 
             config.AttackMobs = killMobsCheckBox.IsSelected();
-
-            UI.InputEnabled = true;
-            Hotkeys.Rehook();
+            
             primaryPanel.Destroy();
-
-            config.VaultArea = new MapArea(Api, config.CityClusterName, new Vector3f(288, -8, 296), new Vector3f(302, 0, 307));
-            config.RepairArea = new MapArea(Api, config.CityClusterName, new Vector3f(306, -8, 314), new Vector3f(316, 0, 326));
+            
             config.GatherArea = new MapArea(Api, config.ResourceClusterName, new Vector3f(-10000, -10000, -10000), new Vector3f(10000, 10000, 10000));
 
             if (autoLoginCheckbox.IsSelected())
@@ -134,7 +134,7 @@ namespace Ennui.Script.Official
                 primaryPanel = Factories.CreateGuiPanel();
                 GuiScene.Add(primaryPanel);
                 primaryPanel.SetSize(300, 390);
-                primaryPanel.SetPosition(screenSize.X / 2, (screenSize.Y / 2), 0);
+                primaryPanel.SetPosition(155, (screenSize.Y / 2), 0);
                 primaryPanel.SetAnchor(new Vector2f(0.0f, 0.0f), new Vector2f(0.0f, 0.0f));
                 primaryPanel.SetPivot(new Vector2f(0.5f, 0.5f));
 
@@ -204,66 +204,114 @@ namespace Ennui.Script.Official
                 harvestStoneCheckBox.SetText("Harvest Rock");
                 harvestStoneCheckBox.SetSelected(true);
 
-                resourceClusterLabel = Factories.CreateGuiLabel();
-                primaryPanel.Add(resourceClusterLabel);
-                resourceClusterLabel.SetPosition(-70, -10, 0);
-                resourceClusterLabel.SetSize(120, 25);
-                resourceClusterLabel.SetText("Resource Cluster");
-
-                resourceClusterInput = Factories.CreateGuiInputField();
-                primaryPanel.Add(resourceClusterInput);
-                resourceClusterInput.SetPosition(-70, -35, 0);
-                resourceClusterInput.SetSize(120, 25);
-
-                cityClusterLabel = Factories.CreateGuiLabel();
-                primaryPanel.Add(cityClusterLabel);
-                cityClusterLabel.SetPosition(70, -10, 0);
-                cityClusterLabel.SetSize(120, 25);
-                cityClusterLabel.SetText("City Cluster");
-
-                cityClusterInput = Factories.CreateGuiInputField();
-                primaryPanel.Add(cityClusterInput);
-                cityClusterInput.SetPosition(70, -35, 0);
-                cityClusterInput.SetSize(120, 25);
-
                 killMobsCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(killMobsCheckBox);
-                killMobsCheckBox.SetPosition(0, -65, 0);
+                killMobsCheckBox.SetPosition(-60, -5, 0);
                 killMobsCheckBox.SetSize(125, 25);
                 killMobsCheckBox.SetText("Kill Mobs");
                 killMobsCheckBox.SetSelected(true);
 
                 autoLoginCheckbox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(autoLoginCheckbox);
-                autoLoginCheckbox.SetPosition(0, -100, 0);
+                autoLoginCheckbox.SetPosition(70, -5, 0);
                 autoLoginCheckbox.SetSize(125, 25);
                 autoLoginCheckbox.SetText("Auto Relogin");
                 autoLoginCheckbox.SetSelected(true);
 
+                resourceClusterLabel = Factories.CreateGuiLabel();
+                primaryPanel.Add(resourceClusterLabel);
+                resourceClusterLabel.SetPosition(-70, -35, 0);
+                resourceClusterLabel.SetSize(120, 25);
+                resourceClusterLabel.SetText("Resource Cluster");
+
+                resourceClusterInput = Factories.CreateGuiInputField();
+                primaryPanel.Add(resourceClusterInput);
+                resourceClusterInput.SetPosition(-70, -55, 0);
+                resourceClusterInput.SetSize(120, 25);
+
+                cityClusterLabel = Factories.CreateGuiLabel();
+                primaryPanel.Add(cityClusterLabel);
+                cityClusterLabel.SetPosition(70, -35, 0);
+                cityClusterLabel.SetSize(120, 25);
+                cityClusterLabel.SetText("City Cluster");
+
+                cityClusterInput = Factories.CreateGuiInputField();
+                primaryPanel.Add(cityClusterInput);
+                cityClusterInput.SetPosition(70, -55, 0);
+                cityClusterInput.SetSize(120, 25);
+
                 characterNameLabel = Factories.CreateGuiLabel();
                 primaryPanel.Add(characterNameLabel);
-                characterNameLabel.SetPosition(0, -125, 0);
+                characterNameLabel.SetPosition(70, -85, 0);
                 characterNameLabel.SetSize(125, 25);
                 characterNameLabel.SetText("Character Name");
 
                 characterNameInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(characterNameInput);
-                characterNameInput.SetPosition(0, -145, 0);
+                characterNameInput.SetPosition(70, -105, 0);
                 characterNameInput.SetSize(125, 25);
+
+                setVaultAreaButton = Factories.CreateGuiButton();
+                primaryPanel.Add(setVaultAreaButton);
+                setVaultAreaButton.SetPosition(-70, -85, 0);
+                setVaultAreaButton.SetSize(125, 25);
+                setVaultAreaButton.SetText("Set Vault Loc.");
+                setVaultAreaButton.AddActionListener((e) =>
+                {
+                    var local = Players.LocalPlayer;
+                    if (local != null)
+                    {
+                        var loc = local.ThreadSafeLocation;
+                        var area = loc.Expand(6, 15, 6);
+                        Logging.Log("Set vault loc to " + loc.X + " " + loc.Y + " " + loc.Z);
+                        config.VaultDest = loc;
+                        config.VaultArea = area;
+                    }
+                });
+
+                setRepairAreaButton = Factories.CreateGuiButton();
+                primaryPanel.Add(setRepairAreaButton);
+                setRepairAreaButton.SetPosition(-70, -115, 0);
+                setRepairAreaButton.SetSize(125, 25);
+                setRepairAreaButton.SetText("Set Repair Loc.");
+                setRepairAreaButton.AddActionListener((e) =>
+                {
+                    var local = Players.LocalPlayer;
+                    if (local != null)
+                    {
+                        var loc = local.ThreadSafeLocation;
+                        var area = loc.Expand(6, 15, 6);
+                        Logging.Log("Set repair loc to " + loc.X + " " + loc.Y + " " + loc.Z);
+                        config.RepairDest = loc;
+                        config.RepairArea = area;
+                    }
+                });
+
+                addRoamPointButton = Factories.CreateGuiButton();
+                primaryPanel.Add(addRoamPointButton);
+                addRoamPointButton.SetPosition(-70, -145, 0);
+                addRoamPointButton.SetSize(125, 25);
+                addRoamPointButton.SetText("Add Roam Point");
+                addRoamPointButton.AddActionListener((e) =>
+                {
+                    var local = Players.LocalPlayer;
+                    if (local != null)
+                    {
+                        var loc = local.ThreadSafeLocation;
+                        Logging.Log("Add roam point " + loc.X + " " + loc.Y + " " + loc.Z);
+                        config.RoamPoints.Add(loc);
+                    }
+                });
 
                 runButton = Factories.CreateGuiButton();
                 primaryPanel.Add(runButton);
                 runButton.SetPosition(0, -175, 0);
                 runButton.SetSize(125, 25);
                 runButton.SetText("Run");
-
                 runButton.AddActionListener((e) =>
                 {
                     SelectedStart();
                 });
-
-                UI.InputEnabled = false;
-                Hotkeys.Unhook();
             });
 
             return true;

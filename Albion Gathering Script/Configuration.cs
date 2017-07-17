@@ -26,5 +26,6 @@ namespace Ennui.Script.Official
         public int FleeHealthPercent { get; set; } = 30;
 
         public List<TypeSet> TypeSetsToUse { get; set; } = new List<TypeSet>();
+        public List<Vector3<float>> RoamPoints { get; set; } = new List<Vector3<float>>();
     }
 }

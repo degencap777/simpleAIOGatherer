@@ -25,7 +25,7 @@ namespace Ennui.Script.Official
             var localPlayer = Players.LocalPlayer;
             if (localPlayer != null)
             {
-                if (Inventory.HasBrokenItems(10))
+                if (config.RepairDest != null && Inventory.HasBrokenItems(10))
                 {
                     parent.EnterState("repair");
                 }

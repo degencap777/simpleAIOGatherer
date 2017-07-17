@@ -51,7 +51,7 @@ namespace Ennui.Script.Official
             {
                 self.CastAt(crowdControlSpell.Slot, target.ThreadSafeLocation);
             }
-            
+
             if (self.HealthPercentage <= 50)
             {
                 var healSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Heal).First;
