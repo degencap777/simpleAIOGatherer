@@ -268,18 +268,22 @@ namespace Ennui.Script.Official
                 }
                 else
                 {
+                    var dist = localLocation.SimpleDistance(harvestableTarget.ThreadSafeLocation);
                     var useMount = false;
-                    if (heldWeight >= 100 && localLocation.SimpleDistance(harvestableTarget.ThreadSafeLocation) >= 6)
+
+                    if (dist >= 15)
                     {
                         useMount = true;
                     }
-
-                    if (heldWeight >= 120 && localLocation.SimpleDistance(harvestableTarget.ThreadSafeLocation) >= 3)
+                    else if (heldWeight >= 100 && dist >= 6)
                     {
                         useMount = true;
                     }
-
-                    if (heldWeight >= 135)
+                    else if (heldWeight >= 120 && dist >= 3)
+                    {
+                        useMount = true;
+                    }
+                    else if (heldWeight >= 135)
                     {
                         useMount = true;
                     }
