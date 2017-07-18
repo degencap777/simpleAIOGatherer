@@ -16,28 +16,40 @@ namespace Ennui.Script.Official
 
         private void HandleSpellRotation(ILocalPlayerObject self, IEntityObject target)
         {
-            var buffSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Buff).ExcludeWithName("ESCAPE_DUNGEON").First;
-            if (buffSpell != null)
+            var buffSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Buff).First;
+            if (buffSelfSpell != null)
             {
-                self.CastOnSelf(buffSpell.Slot);
+                self.CastOnSelf(buffSelfSpell.Slot);
             }
 
-            var instantSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Instant).First;
-            if (instantSpell != null)
+            var instantSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Instant).ExcludeWithName("ESCAPE_DUNGEON").First;
+            if (instantSelfSpell != null)
             {
-                self.CastOnSelf(instantSpell.Slot);
+                self.CastOnSelf(instantSelfSpell.Slot);
             }
 
-            var movBuffSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.MovementBuff).First;
-            if (movBuffSpell != null)
+            var movBufSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.MovementBuff).First;
+            if (movBufSelfSpell != null)
             {
-                self.CastOnSelf(movBuffSpell.Slot);
+                self.CastOnSelf(movBufSelfSpell.Slot);
             }
 
-            var dmgSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Enemy).FilterByCategory(SpellCategory.Damage).First;
-            if (dmgSpell != null)
+            var buffEnemySpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Enemy).FilterByCategory(SpellCategory.Buff).First;
+            if (buffEnemySpell != null)
             {
-                self.CastOn(dmgSpell.Slot, target);
+                self.CastOn(buffEnemySpell.Slot, target);
+            }
+
+            var debuffEnemySpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Enemy).FilterByCategory(SpellCategory.Debuff).First;
+            if (debuffEnemySpell != null)
+            {
+                self.CastOn(debuffEnemySpell.Slot, target);
+            }
+
+            var dmgEnemySpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Enemy).FilterByCategory(SpellCategory.Damage).First;
+            if (dmgEnemySpell != null)
+            {
+                self.CastOn(dmgEnemySpell.Slot, target);
             }
 
             var dmgSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Damage).First;
