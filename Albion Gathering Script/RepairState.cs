@@ -24,20 +24,24 @@ namespace Ennui.Script.Official
 
             if (!config.RepairArea.Contains(localPlayer.ThreadSafeLocation))
             {
+                Logging.Log("Moving to repair area");
+
                 var config = new PointPathFindConfig();
                 config.ClusterName = this.config.CityClusterName;
-                config.UseWeb = false;
                 config.Point = this.config.RepairDest;
+                config.UseWeb = false;
+                config.UseMount = true;
                 Movement.PathFindTo(config);
                 return 0;
             }
 
             if (localPlayer.IsMounted)
             {
+                Logging.Log("Getting off mount...");
                 localPlayer.ToggleMount();
             }
 
-            if (!Inventory.HasBrokenItems(70))
+            if (!Api.HasBrokenItems())
             {
                 if (localPlayer.WeighedDownPercent >= 90)
                 {
@@ -73,7 +77,7 @@ namespace Ennui.Script.Official
                 {
                     Time.SleepUntil(() =>
                     {
-                        return !Inventory.HasBrokenItems(70);
+                        return !Api.HasBrokenItems();
                     }, 60000);
                 }
             }

@@ -67,7 +67,7 @@ namespace Ennui.Script.Official
                 var toDeposit = new List<IItemStack>();
                 foreach (var stack in allItems)
                 {
-                    if (stack.UniqueName.Contains("JOURNAL"))
+                    if (!stack.UniqueName.Contains("JOURNAL"))
                     {
                         toDeposit.Add(stack);
                     }
@@ -77,7 +77,7 @@ namespace Ennui.Script.Official
                 {
                     if (localPlayer.TotalHoldWeight < 99)
                     {
-                        if (config.RepairDest != null && Inventory.HasBrokenItems(70))
+                        if (config.RepairDest != null && Api.HasBrokenItems())
                         {
                             parent.EnterState("repair");
                         }

@@ -6,23 +6,27 @@ namespace Ennui.Script.Official
     {
         public static bool HasBrokenItems(this IApi api)
         {
-            var local = api.Players.LocalPlayer;
-            if (local == null)
-                return false;
-
-            var inventory = local.InventoryContainer;
-            if (inventory == null)
-                return false;
-
-            var items = inventory.ValidItems;
-            if (items == null)
-                return false;
-
-            foreach (var item in items)
+            var equipment = api.Equipment.AllItems;
+            if (equipment != null)
             {
-                if (item.Integrity <= 10)
+                foreach (var item in equipment)
                 {
-                    return true;
+                    if (item.Integrity <= 10)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            var inventory = api.Inventory.AllItems;
+            if (inventory != null)
+            {
+                foreach (var item in inventory)
+                {
+                    if (item.Integrity <= 10)
+                    {
+                        return true;
+                    }
                 }
             }
 
