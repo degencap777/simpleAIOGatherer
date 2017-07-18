@@ -15,6 +15,8 @@ namespace Ennui.Script.Official
 
         public override int OnLoop(IScriptEngine se)
         {
+            Logging.Log("Attempting to repair...");
+
             var localPlayer = Players.LocalPlayer;
             if (localPlayer == null)
             {
@@ -45,18 +47,19 @@ namespace Ennui.Script.Official
             {
                 if (localPlayer.WeighedDownPercent >= 90)
                 {
+                    Logging.Log("No broke items, leaving to bank");
                     parent.EnterState("bank");
                 }
                 else
                 {
+                    Logging.Log("No broke items, leaving to gather");
                     parent.EnterState("gather");
                 }
             }
-            return 0;
-
 
             if (!RepairWindow.IsOpen)
             {
+                Logging.Log("Attempting to find repair building...");
                 var building = Objects.RepairChain.Closest(localPlayer.ThreadSafeLocation);
                 if (building == null)
                 {
@@ -73,6 +76,7 @@ namespace Ennui.Script.Official
 
             if (RepairWindow.IsOpen)
             {
+                Logging.Log("Repair window is open!");
                 if (RepairWindow.RepairAll())
                 {
                     Time.SleepUntil(() =>

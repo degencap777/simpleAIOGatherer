@@ -16,13 +16,13 @@ namespace Ennui.Script.Official
 
         private void HandleSpellRotation(ILocalPlayerObject self, IEntityObject target)
         {
-            var buffSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Buff).ExcludeWithName("ESCAPE_DUNGEON").First;
+            var buffSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Buff).First;
             if (buffSpell != null)
             {
                 self.CastOnSelf(buffSpell.Slot);
             }
 
-            var instantSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Instant).First;
+            var instantSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Instant).ExcludeWithName("ESCAPE_DUNGEON").First;
             if (instantSpell != null)
             {
                 self.CastOnSelf(instantSpell.Slot);
