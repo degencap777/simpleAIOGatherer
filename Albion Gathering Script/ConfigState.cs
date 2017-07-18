@@ -261,8 +261,9 @@ namespace Ennui.Script.Official
                     if (local != null)
                     {
                         var loc = local.ThreadSafeLocation;
-                        var area = loc.Expand(6, 15, 6);
+                        var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set vault loc to " + loc.X + " " + loc.Y + " " + loc.Z);
+                        cityClusterInput.SetText(Game.Cluster.Name);
                         config.VaultDest = loc;
                         config.VaultArea = area;
                     }
@@ -279,8 +280,9 @@ namespace Ennui.Script.Official
                     if (local != null)
                     {
                         var loc = local.ThreadSafeLocation;
-                        var area = loc.Expand(6, 15, 6);
+                        var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set repair loc to " + loc.X + " " + loc.Y + " " + loc.Z);
+                        cityClusterInput.SetText(Game.Cluster.Name);
                         config.RepairDest = loc;
                         config.RepairArea = area;
                     }
@@ -298,6 +300,7 @@ namespace Ennui.Script.Official
                     {
                         var loc = local.ThreadSafeLocation;
                         Logging.Log("Add roam point " + loc.X + " " + loc.Y + " " + loc.Z);
+                        resourceClusterInput.SetText(Game.Cluster.Name);
                         config.RoamPoints.Add(loc);
                     }
                 });

@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AreaExtensions.cs" />
     <Compile Include="BankState.cs" />
     <Compile Include="CombatState.cs" />
     <Compile Include="ConfigState.cs" />
