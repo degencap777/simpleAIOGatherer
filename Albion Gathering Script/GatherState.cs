@@ -186,6 +186,10 @@ namespace Ennui.Script.Official
             {
                 weightThreshold = 130;
             }
+            else if (Equipment.HasItemContainingName("UNIQUE_MOUNT_CART_STARTERPACK"))
+            {
+                weightThreshold = 1880;
+            }
             else if (Equipment.HasItemContainingName("_MOUNT_OX"))
             {
                 weightThreshold = 450;
