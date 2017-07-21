@@ -1,5 +1,6 @@
 ﻿using Ennui.Api;
 using Ennui.Api.Direct.Object;
+using Ennui.Api.Meta;
 using Ennui.Api.Method;
 using Ennui.Api.Script;
 using System;
@@ -123,6 +124,7 @@ namespace Ennui.Script.Official
                 .ExcludeWithIds(blacklist.ToArray())
                 .ExcludeByArea(territoryAreas.ToArray())
                 .FilterByTypeSet(config.TypeSetsToUse.ToArray())
+                .FilterBySetupState(HarvestableSetupState.Ok)
                 .Closest(center);
             
             if (mobTarget != null && harvestableTarget != null)
