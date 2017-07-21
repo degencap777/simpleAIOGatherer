@@ -16,6 +16,11 @@ namespace Ennui.Script.Official
 
         private void HandleSpellRotation(ILocalPlayerObject self, IEntityObject target)
         {
+            if (self.CurrentActionState == ActionState.Casting)
+            {
+                return;
+            }
+
             var buffSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Buff).First;
             if (buffSelfSpell != null)
             {
