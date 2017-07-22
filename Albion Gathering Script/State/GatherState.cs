@@ -99,7 +99,7 @@ namespace Ennui.Script.Official
                 var tArea = new Area(tBegin, tEnd);
                 territoryAreas.Add(tArea);
             }
-            
+
             if (config.AttackMobs)
             {
                 var lpo = Players.LocalPlayer;
@@ -112,7 +112,7 @@ namespace Ennui.Script.Official
                         Logging.Log(drops.ToString());
                         if (drops.Count > 0)
                         {
-                            
+
                             resourceMobs.Add(ent);
                         }
                     }
@@ -123,7 +123,7 @@ namespace Ennui.Script.Official
                     }
                 }
             }
-            
+
             harvestableTarget = Objects
                 .HarvestableChain
                 .FilterDepleted()
@@ -132,7 +132,7 @@ namespace Ennui.Script.Official
                 .FilterByTypeSet(config.TypeSetsToUse.ToArray())
                 .FilterWithSetupState(HarvestableSetupState.Invalid)
                 .Closest(center);
-            
+
             if (mobTarget != null && harvestableTarget != null)
             {
                 var mobDist = mobTarget.ThreadSafeLocation.SimpleDistance(center);
@@ -161,6 +161,49 @@ namespace Ennui.Script.Official
                 return config.RoamPoints[0];
             }
             return config.RoamPoints[rand.Next(config.RoamPoints.Count)];
+        }
+
+        private float GetWeightThreshold()
+        {
+            var weightThreshold = 98;
+            if (Equipment.HasItemContainingName("_MOUNT_HORSE"))
+            {
+                weightThreshold = 130;
+            }
+            else if (Equipment.HasItemContainingName("UNIQUE_MOUNT_CART_STARTERPACK"))
+            {
+                weightThreshold = 1880;
+            }
+            else if (Equipment.HasItemContainingName("_MOUNT_OX"))
+            {
+                weightThreshold = 450;
+            }
+
+            return weightThreshold;
+        }
+
+        private Boolean ShouldUseMount(float heldWeight, float dist)
+        {
+            var useMount = false;
+
+            if (dist >= 15)
+            {
+                useMount = true;
+            }
+            else if (heldWeight >= 100 && dist >= 6)
+            {
+                useMount = true;
+            }
+            else if (heldWeight >= 120 && dist >= 3)
+            {
+                useMount = true;
+            }
+            else if (heldWeight >= 135)
+            {
+                useMount = true;
+            }
+
+            return useMount;
         }
 
         public override int OnLoop(IScriptEngine se)
@@ -204,24 +247,9 @@ namespace Ennui.Script.Official
 
                 return 0;
             }
-
-            var weightThreshold = 98;
-            if (Equipment.HasItemContainingName("_MOUNT_HORSE"))
-            {
-                weightThreshold = 130;
-            }
-            else if (Equipment.HasItemContainingName("UNIQUE_MOUNT_CART_STARTERPACK"))
-            {
-                weightThreshold = 1880;
-            }
-            else if (Equipment.HasItemContainingName("_MOUNT_OX"))
-            {
-                weightThreshold = 450;
-            }
-
+            
             var heldWeight = localPlayer.WeighedDownPercent;
-            Logging.Log("Weight threshold: " + weightThreshold, LogLevel.Atom);
-            if (heldWeight >= weightThreshold)
+            if (heldWeight >= GetWeightThreshold())
             {
                 Logging.Log("Local player has too much weight, banking!", LogLevel.Atom);
                 parent.EnterState("bank");
@@ -277,7 +305,7 @@ namespace Ennui.Script.Official
 
                     context.State = "Attempting to gather " + harvestableTarget.Id + " (" + gatherAttempts + ")";
                     harvestableTarget.Click();
-                    
+
                     Time.SleepUntil(() =>
                     {
                         return localPlayer.IsHarvesting;
@@ -287,38 +315,19 @@ namespace Ennui.Script.Official
                     {
                         gatherAttempts = gatherAttempts + 1;
                     }
-                    
+
                     return 100;
                 }
                 else
                 {
-                context.State = "Walking to resource...";
+                    context.State = "Walking to resource...";
 
-                var dist = localLocation.SimpleDistance(harvestableTarget.ThreadSafeLocation);
-                    var useMount = false;
-
-                    if (dist >= 15)
-                    {
-                        useMount = true;
-                    }
-                    else if (heldWeight >= 100 && dist >= 6)
-                    {
-                        useMount = true;
-                    }
-                    else if (heldWeight >= 120 && dist >= 3)
-                    {
-                        useMount = true;
-                    }
-                    else if (heldWeight >= 135)
-                    {
-                        useMount = true;
-                    }
-
+                    var dist = localLocation.SimpleDistance(harvestableTarget.ThreadSafeLocation);
                     var config = new ResourcePathFindConfig();
                     config.ClusterName = this.config.ResourceClusterName;
                     config.UseWeb = false;
                     config.Target = harvestableTarget;
-                    config.UseMount = useMount;
+                    config.UseMount = ShouldUseMount(heldWeight, dist);
 
                     var result = Movement.PathFindTo(config);
                     if (result == PathFindResult.Failed)
@@ -341,7 +350,7 @@ namespace Ennui.Script.Official
                     {
                         localPlayer.ToggleMount(false);
                     }
-                    
+
                     localPlayer.SetSelectedObject(mobTarget);
                     localPlayer.AttackSelectedObject();
 
@@ -358,18 +367,20 @@ namespace Ennui.Script.Official
                     {
                         gatherAttempts = gatherAttempts + 1;
                     }
-                    
+
                     return 100;
                 }
                 else
                 {
                     context.State = "Walking to mob...";
 
+                    var dist = localLocation.SimpleDistance(mobTarget.ThreadSafeLocation);
                     var config = new PointPathFindConfig();
                     config.ClusterName = this.config.ResourceClusterName;
                     config.UseWeb = false;
                     config.Point = mobTarget.ThreadSafeLocation;
-                    
+                    config.UseMount = ShouldUseMount(heldWeight, dist);
+
                     if (Movement.PathFindTo(config) == PathFindResult.Failed)
                     {
                         context.State = "Failed to path find to mob!";
