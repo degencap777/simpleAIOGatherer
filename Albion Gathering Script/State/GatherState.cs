@@ -11,14 +11,18 @@ namespace Ennui.Script.Official
     public class GatherState : StateScript
     {
         private Configuration config;
+        private Context context;
+
         private IHarvestableObject harvestableTarget;
         private IMobObject mobTarget;
         private int gatherAttempts = 0;
         private List<long> blacklist = new List<long>();
+        private Random rand = new Random();
 
-        public GatherState(Configuration config)
+        public GatherState(Configuration config, Context context)
         {
             this.config = config;
+            this.context = context;
         }
 
         private void Reset()
@@ -80,6 +84,8 @@ namespace Ennui.Script.Official
 
         private bool FindResource(Vector3<float> center)
         {
+            context.State = "Finding resource...";
+
             Reset();
             var territoryAreas = new List<Area>();
             var graph = Graphs.LookupByDisplayName(Game.ClusterName);
@@ -144,6 +150,19 @@ namespace Ennui.Script.Official
             return harvestableTarget != null || mobTarget != null;
         }
 
+        private Vector3<float> RandomRoamPoint()
+        {
+            if (config.RoamPoints.Count == 0)
+            {
+                return null;
+            }
+            if (config.RoamPoints.Count == 1)
+            {
+                return config.RoamPoints[0];
+            }
+            return config.RoamPoints[rand.Next(config.RoamPoints.Count)];
+        }
+
         public override int OnLoop(IScriptEngine se)
         {
             if (config.RepairDest != null && Api.HasBrokenItems())
@@ -155,6 +174,7 @@ namespace Ennui.Script.Official
             var localPlayer = Players.LocalPlayer;
             if (localPlayer == null)
             {
+                context.State = "Failed to find local player!";
                 Logging.Log("Failed to find local player!", LogLevel.Error);
                 return 10_000;
             }
@@ -169,6 +189,8 @@ namespace Ennui.Script.Official
             var localLocation = localPlayer.ThreadSafeLocation;
             if (!config.GatherArea.Contains(localLocation))
             {
+                context.State = "Walking to gather area...";
+
                 Logging.Log("Local player not in gather area, walk there!", LogLevel.Atom);
 
                 var moveConfig = new PointPathFindConfig();
@@ -210,15 +232,15 @@ namespace Ennui.Script.Official
             {
                 if (!FindResource(localLocation))
                 {
-                    Logging.Log("failed to find resource");
-                    if (config.RoamPoints.Count == 0)
+                    var point = RandomRoamPoint();
+                    if (point == null)
                     {
+                        context.State = "Failed to find roam point!";
                         Logging.Log("Cannot roam as roam points were not added!");
                         return 15000;
                     }
 
-                    var rand = new Random();
-                    var point = config.RoamPoints[rand.Next(config.RoamPoints.Count)];
+                    context.State = "Roaming";
                     var moveConfig = new PointPathFindConfig();
                     moveConfig.UseWeb = false;
                     moveConfig.ClusterName = config.ResourceClusterName;
@@ -236,7 +258,7 @@ namespace Ennui.Script.Official
 
                     if (Movement.PathFindTo(moveConfig) != PathFindResult.Success)
                     {
-                        Logging.Log("Local player failed to find path to roam point!", LogLevel.Error);
+                        context.State = "Failed to find path to roaming point...";
                         return 10_000;
                     }
                     return 5000;
@@ -245,19 +267,15 @@ namespace Ennui.Script.Official
 
             if (harvestableTarget != null)
             {
-                Logging.Log("Gather resource begin");
-                
                 var area = harvestableTarget.InteractBounds;
                 if (area.Contains(localLocation))
                 {
-                    Logging.Log("in gather area");
-                    
                     if (localPlayer.IsMounted)
                     {
                         localPlayer.ToggleMount(false);
                     }
-                    
-                    Logging.Log(string.Format("attempting to gather {0}", gatherAttempts));
+
+                    context.State = "Attempting to gather " + harvestableTarget.Id + " (" + gatherAttempts + ")";
                     harvestableTarget.Click();
                     
                     Time.SleepUntil(() =>
@@ -274,7 +292,9 @@ namespace Ennui.Script.Official
                 }
                 else
                 {
-                    var dist = localLocation.SimpleDistance(harvestableTarget.ThreadSafeLocation);
+                context.State = "Walking to resource...";
+
+                var dist = localLocation.SimpleDistance(harvestableTarget.ThreadSafeLocation);
                     var useMount = false;
 
                     if (dist >= 15)
@@ -303,6 +323,7 @@ namespace Ennui.Script.Official
                     var result = Movement.PathFindTo(config);
                     if (result == PathFindResult.Failed)
                     {
+                        context.State = "Failed to path find to resource!";
                         blacklist.Add(harvestableTarget.Id);
                         Reset();
                     }
@@ -311,17 +332,16 @@ namespace Ennui.Script.Official
             }
             else if (mobTarget != null)
             {
-                Logging.Log("Gather mob begin");
-                
                 var mobGatherArea = mobTarget.ThreadSafeLocation.Expand(3, 3, 3);
                 if (mobGatherArea.Contains(localLocation))
                 {
+                    context.State = "Attempting to kill mob";
+
                     if (localPlayer.IsMounted)
                     {
                         localPlayer.ToggleMount(false);
                     }
-
-                    Logging.Log(string.Format("attempting to attack mob {0}", gatherAttempts));
+                    
                     localPlayer.SetSelectedObject(mobTarget);
                     localPlayer.AttackSelectedObject();
 
@@ -343,6 +363,7 @@ namespace Ennui.Script.Official
                 }
                 else
                 {
+                    context.State = "Walking to mob...";
 
                     var config = new PointPathFindConfig();
                     config.ClusterName = this.config.ResourceClusterName;
@@ -351,6 +372,7 @@ namespace Ennui.Script.Official
                     
                     if (Movement.PathFindTo(config) == PathFindResult.Failed)
                     {
+                        context.State = "Failed to path find to mob!";
                         blacklist.Add(mobTarget.Id);
                         Reset();
                     }

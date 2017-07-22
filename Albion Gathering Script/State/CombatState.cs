@@ -8,10 +8,12 @@ namespace Ennui.Script.Official
     public class CombatState : StateScript
     {
         private Configuration config;
+        private Context context;
 
-        public CombatState(Configuration config)
+        public CombatState(Configuration config, Context context)
         {
             this.config = config;
+            this.context = context;
         }
 
         private void HandleSpellRotation(ILocalPlayerObject self, IEntityObject target)
@@ -20,6 +22,8 @@ namespace Ennui.Script.Official
             {
                 return;
             }
+
+            context.State = "Casting spell!";
 
             var buffSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Buff).First;
             if (buffSelfSpell != null)
@@ -90,7 +94,7 @@ namespace Ennui.Script.Official
             var localPlayer = Players.LocalPlayer;
             if (localPlayer == null)
             {
-                Logging.Log("Failed to find local player!", LogLevel.Warning);
+                context.State = "Failed to find local player!";
                 return 100;
             }
 
@@ -107,6 +111,8 @@ namespace Ennui.Script.Official
 
             if (localPlayer.AttackTarget == null)
             {
+                context.State = "Killing mob!";
+
                 var list = localPlayer.UnderAttackBy;
                 if (list.Count > 0)
                 {

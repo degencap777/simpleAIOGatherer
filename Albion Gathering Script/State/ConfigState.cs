@@ -3,6 +3,7 @@ using Ennui.Api.Builder;
 using Ennui.Api.Gui;
 using Ennui.Api.Meta;
 using Ennui.Api.Script;
+using System;
 
 namespace Ennui.Script.Official
 {
@@ -40,10 +41,12 @@ namespace Ennui.Script.Official
         private IButton runButton;
 
         private Configuration config;
+        private Context context;
 
-        public ConfigState(Configuration config)
+        public ConfigState(Configuration config, Context context)
         {
             this.config = config;
+            this.context = context;
         }
 
         private void AddTiers(ResourceType type, string input)
@@ -52,31 +55,50 @@ namespace Ennui.Script.Official
             {
                 return;
             }
-            
-            var tierGroups = input.Replace(" ", "").Split(',');
-            foreach (var tierGroup in tierGroups)
+
+            try
             {
-                var tierGroupsBroken = tierGroup.Split('.');
-
-                var minTier = 0;
-                var maxTier = 0;
-                var minRarity = 0;
-                var maxRarity = 10;
-                if (tierGroupsBroken.Length > 0)
+                var tierGroups = input.Replace(" ", "").Split(',');
+                foreach (var tierGroup in tierGroups)
                 {
-                    minTier = int.Parse(tierGroupsBroken[0]);
-                    maxTier = int.Parse(tierGroupsBroken[0]);
-
-                    if (tierGroupsBroken.Length == 2)
+                    var filtered = tierGroup.Trim(' ', ',');
+                    if (filtered.Length == 0)
                     {
-                        minRarity = int.Parse(tierGroupsBroken[1]);
-                        maxRarity = int.Parse(tierGroupsBroken[1]);
+                        continue;
                     }
+
+                    var tierGroupsBroken = filtered.Split('.');
+
+                    var tier = 0;
+                    var rarity = 0;
+                    if (tierGroupsBroken.Length > 0)
+                    {
+                        tier = 0;
+                        if (!int.TryParse(tierGroupsBroken[0], out tier))
+                        {
+                            Logging.Log("Failed to parse tier " + input);
+                        }
+
+                        if (tierGroupsBroken.Length == 2)
+                        {
+                            rarity = 0;
+                            if (!int.TryParse(tierGroupsBroken[0], out rarity))
+                            {
+                                Logging.Log("Failed to parse rarity " + input);
+                            }
+                        }
+                        else
+                        {
+                            Logging.Log("Invalid rarity format " + input);
+                        }
+                    }
+
+                    config.TypeSetsToUse.Add(new TypeSet(tier, tier, type, rarity, rarity));
                 }
-
-                Logging.Log("Adding tier " + type + " " + minTier + "-" + maxTier + " " + minRarity + "-" + maxRarity);
-
-                config.TypeSetsToUse.Add(new TypeSet(minTier, maxTier, type, minRarity, maxRarity));
+            }
+            catch (Exception e)
+            {
+                context.State = "Failed to parse tiers " + input;
             }
         }
 
@@ -123,9 +145,11 @@ namespace Ennui.Script.Official
 
             parent.EnterState("resolve");
         }
-
+        
         public override bool OnStart(IScriptEngine se)
         {
+            context.State = "Configuring...";
+
             Game.Sync(() =>
             {
                 var screenSize = Game.ScreenSize;
@@ -264,8 +288,8 @@ namespace Ennui.Script.Official
                         var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set vault loc to " + loc.X + " " + loc.Y + " " + loc.Z);
                         cityClusterInput.SetText(Game.Cluster.Name);
-                        config.VaultDest = loc;
-                        config.VaultArea = area;
+                        config.VaultDest = new Vector3f(loc.X, loc.Y, loc.Z);
+                        config.VaultArea = new Area(area.Start, area.End);
                     }
                 });
 
@@ -283,8 +307,8 @@ namespace Ennui.Script.Official
                         var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set repair loc to " + loc.X + " " + loc.Y + " " + loc.Z);
                         cityClusterInput.SetText(Game.Cluster.Name);
-                        config.RepairDest = loc;
-                        config.RepairArea = area;
+                        config.RepairDest = new Vector3f(loc.X, loc.Y, loc.Z);
+                        config.RepairArea = new Area(area.Start, area.End);
                     }
                 });
 
@@ -301,7 +325,7 @@ namespace Ennui.Script.Official
                         var loc = local.ThreadSafeLocation;
                         Logging.Log("Add roam point " + loc.X + " " + loc.Y + " " + loc.Z);
                         resourceClusterInput.SetText(Game.Cluster.Name);
-                        config.RoamPoints.Add(loc);
+                        config.RoamPoints.Add(new Vector3f(loc.X, loc.Y, loc.Z));
                     }
                 });
 
@@ -312,6 +336,24 @@ namespace Ennui.Script.Official
                 runButton.SetText("Run");
                 runButton.AddActionListener((e) =>
                 {
+                    if (config.VaultDest == null)
+                    {
+                        context.State = "No vault area set!";
+                        return;
+                    }
+
+                    if (config.TypeSetsToUse.Count == 0)
+                    {
+                        context.State = "No resources added!";
+                        return;
+                    }
+
+                    if (config.RoamPoints.Count == 0)
+                    {
+                        context.State = "No roam points added!";
+                        return;
+                    }
+
                     SelectedStart();
                 });
             });

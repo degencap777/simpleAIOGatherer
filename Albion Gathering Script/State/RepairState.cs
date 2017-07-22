@@ -7,26 +7,26 @@ namespace Ennui.Script.Official
     public class RepairState : StateScript
     {
         private Configuration config;
+        private Context context;
 
-        public RepairState(Configuration config)
+        public RepairState(Configuration config, Context context)
         {
             this.config = config;
+            this.context = context;
         }
 
         public override int OnLoop(IScriptEngine se)
         {
-            Logging.Log("Attempting to repair...");
-
             var localPlayer = Players.LocalPlayer;
             if (localPlayer == null)
             {
-                Logging.Log("Failed to find local player!", LogLevel.Warning);
+                context.State = "Failed to find local player!";
                 return 10_000;
             }
 
             if (!config.RepairArea.Contains(localPlayer.ThreadSafeLocation))
             {
-                Logging.Log("Moving to repair area");
+                context.State = "Walking to repair area...";
 
                 var config = new PointPathFindConfig();
                 config.ClusterName = this.config.CityClusterName;
@@ -39,31 +39,29 @@ namespace Ennui.Script.Official
 
             if (localPlayer.IsMounted)
             {
-                Logging.Log("Getting off mount...");
-                localPlayer.ToggleMount();
+                localPlayer.ToggleMount(false);
             }
 
             if (!Api.HasBrokenItems())
             {
                 if (localPlayer.WeighedDownPercent >= 90)
                 {
-                    Logging.Log("No broke items, leaving to bank");
                     parent.EnterState("bank");
                 }
                 else
                 {
-                    Logging.Log("No broke items, leaving to gather");
                     parent.EnterState("gather");
                 }
             }
 
             if (!RepairWindow.IsOpen)
             {
-                Logging.Log("Attempting to find repair building...");
+                context.State = "Opening repair building...";
+
                 var building = Objects.RepairChain.Closest(localPlayer.ThreadSafeLocation);
                 if (building == null)
                 {
-                    Logging.Log("failed to find repair building");
+                    context.State = "Failed to find repair building!";
                     return 5000;
                 }
 
@@ -76,7 +74,8 @@ namespace Ennui.Script.Official
 
             if (RepairWindow.IsOpen)
             {
-                Logging.Log("Repair window is open!");
+                context.State = "Repairing...";
+
                 if (RepairWindow.RepairAll())
                 {
                     Time.SleepUntil(() =>

@@ -2,20 +2,19 @@
 using Ennui.Api.Direct;
 using Ennui.Api.Method;
 using Ennui.Api.Script;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ennui.Script.Official
 {
     public class BankState : StateScript
     {
         private Configuration config;
+        private Context context;
 
-        public BankState(Configuration config)
+        public BankState(Configuration config, Context context)
         {
             this.config = config;
+            this.context = context;
         }
 
         public override int OnLoop(IScriptEngine se)
@@ -23,12 +22,14 @@ namespace Ennui.Script.Official
             var localPlayer = Players.LocalPlayer;
             if (localPlayer == null)
             {
-                Logging.Log("Failed to find local player!", LogLevel.Warning);
+                context.State = "Failed to find local player!";
                 return 10_000;
             }
 
             if (!config.VaultArea.Contains(localPlayer.ThreadSafeLocation))
             {
+                context.State = "Walking to vault...";
+
                 var config = new PointPathFindConfig();
                 config.ClusterName = this.config.CityClusterName;
                 config.UseWeb = false;
@@ -46,10 +47,12 @@ namespace Ennui.Script.Official
 
             if (!Banking.IsOpen)
             {
+                context.State = "Opening vault...";
+
                 var bank = Objects.BankChain.Closest(localPlayer.ThreadSafeLocation);
                 if (bank == null)
                 {
-                    Logging.Log("failed to find bank vault building");
+                    context.State = "Failed to find vault!";
                     return 5000;
                 }
 
@@ -62,6 +65,8 @@ namespace Ennui.Script.Official
 
             if (Banking.IsOpen)
             {
+                context.State = "FDepositing items...";
+
                 var beginWeight = localPlayer.WeighedDownPercent;
                 var allItems = Inventory.GetItemsBySubstring("_ROCK", "_ORE", "_HIDE", "_WOOD", "_FIBER");
                 var toDeposit = new List<IItemStack>();

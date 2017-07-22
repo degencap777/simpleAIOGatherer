@@ -6,10 +6,12 @@ namespace Ennui.Script.Official
     public class ResolveState : StateScript
     {
         private Configuration config;
+        private Context context;
 
-        public ResolveState(Configuration config)
+        public ResolveState(Configuration config, Context context)
         {
             this.config = config;
+            this.context = context;
         }
 
         public override int OnLoop(IScriptEngine se)
@@ -21,6 +23,8 @@ namespace Ennui.Script.Official
                 se.StopScript();
                 return 0;
             }
+
+            context.State = "Resolving...";
 
             var localPlayer = Players.LocalPlayer;
             if (localPlayer != null)
@@ -40,7 +44,6 @@ namespace Ennui.Script.Official
                 return 0;
             }
 
-            Logging.Log("Failed to resolve state, trying again later...", LogLevel.Warning);
             return 10_000;
         }
     }

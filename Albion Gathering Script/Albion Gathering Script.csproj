@@ -46,16 +46,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaExtensions.cs" />
-    <Compile Include="BankState.cs" />
-    <Compile Include="CombatState.cs" />
-    <Compile Include="ConfigState.cs" />
+    <Compile Include="State\BankState.cs" />
+    <Compile Include="State\CombatState.cs" />
+    <Compile Include="State\ConfigState.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Context.cs" />
     <Compile Include="EquipmentUtils.cs" />
     <Compile Include="GatheringScript.cs" />
-    <Compile Include="GatherState.cs" />
+    <Compile Include="State\GatherState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RepairState.cs" />
-    <Compile Include="ResolveState.cs" />
+    <Compile Include="State\RepairState.cs" />
+    <Compile Include="State\ResolveState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

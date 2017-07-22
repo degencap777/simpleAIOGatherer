@@ -9,11 +9,11 @@ namespace Ennui.Script.Official
         public string CityClusterName { get; set; }
         public string ResourceClusterName { get; set; }
 
-        public IArea<float> GatherArea { get; set; }
-        public IArea<float> VaultArea { get; set; }
-        public Vector3<float> VaultDest { get; set; }
-        public IArea<float> RepairArea { get; set; }
-        public Vector3<float> RepairDest { get; set; }
+        public Area GatherArea { get; set; }
+        public Area VaultArea { get; set; }
+        public Vector3f VaultDest { get; set; }
+        public Area RepairArea { get; set; }
+        public Vector3f RepairDest { get; set; }
 
         public string LoginCharacterName { get; set; } = "";
         public int GatherAttemptsTimeout { get; set; } = 6;
@@ -26,6 +26,6 @@ namespace Ennui.Script.Official
         public int FleeHealthPercent { get; set; } = 30;
 
         public List<TypeSet> TypeSetsToUse { get; set; } = new List<TypeSet>();
-        public List<Vector3<float>> RoamPoints { get; set; } = new List<Vector3<float>>();
+        public List<Vector3f> RoamPoints { get; set; } = new List<Vector3f>();
     }
 }

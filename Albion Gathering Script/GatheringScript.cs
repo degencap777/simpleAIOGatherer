@@ -10,19 +10,22 @@ namespace Ennui.Script.Official
     public class GatheringState : StateScript
     {
         private Configuration config;
+        private Context context;
         private Timer timer;
 
         public override bool OnStart(IScriptEngine se)
         {
             config = new Configuration();
+            context = new Context();
+
             timer = new Timer();
 
-            AddState("config", new ConfigState(config));
-            AddState("resolve", new ResolveState(config));
-            AddState("gather", new GatherState(config));
-            AddState("combat", new CombatState(config));
-            AddState("repair", new RepairState(config));
-            AddState("bank", new BankState(config));
+            AddState("config", new ConfigState(config, context));
+            AddState("resolve", new ResolveState(config, context));
+            AddState("gather", new GatherState(config, context));
+            AddState("combat", new CombatState(config, context));
+            AddState("repair", new RepairState(config, context));
+            AddState("bank", new BankState(config, context));
             EnterState("config");
             return base.OnStart(se);
         }
@@ -34,7 +37,7 @@ namespace Ennui.Script.Official
             g.SetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
             g.DrawString("http://ennui.ninja - Simple AIO Gatherer", 20, 100);
             g.DrawString(string.Format("Runtime: {0}", Time.FormatElapsed(timer.ElapsedMs)), 20, 115);
-            g.DrawString(string.Format("State: {0}", RunningKey), 20, 130);
+            g.DrawString(string.Format("State: {0}", context.State), 20, 130);
 
             if (RunningKey != null && RunningKey != "config")
             {
