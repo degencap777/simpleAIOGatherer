@@ -130,7 +130,7 @@ namespace Ennui.Script.Official
                 .ExcludeWithIds(blacklist.ToArray())
                 .ExcludeByArea(territoryAreas.ToArray())
                 .FilterByTypeSet(config.TypeSetsToUse.ToArray())
-                .FilterBySetupState(HarvestableSetupState.Ok)
+                .FilterWithSetupState(HarvestableSetupState.Invalid)
                 .Closest(center);
             
             if (mobTarget != null && harvestableTarget != null)
