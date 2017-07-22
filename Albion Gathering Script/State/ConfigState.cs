@@ -342,12 +342,6 @@ namespace Ennui.Script.Official
                         return;
                     }
 
-                    if (config.TypeSetsToUse.Count == 0)
-                    {
-                        context.State = "No resources added!";
-                        return;
-                    }
-
                     if (config.RoamPoints.Count == 0)
                     {
                         context.State = "No roam points added!";
