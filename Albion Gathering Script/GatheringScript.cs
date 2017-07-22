@@ -38,52 +38,7 @@ namespace Ennui.Script.Official
             g.DrawString("http://ennui.ninja - Simple AIO Gatherer", 20, 100);
             g.DrawString(string.Format("Runtime: {0}", Time.FormatElapsed(timer.ElapsedMs)), 20, 115);
             g.DrawString(string.Format("State: {0}", context.State), 20, 130);
-
-            if (RunningKey != null && RunningKey != "config")
-            {
-                var lp = Players.LocalPlayer;
-                if (lp != null)
-                {
-                    var harvestables = Objects
-                        .HarvestableChain
-                        .FilterDepleted()
-                        .FilterByArea(lp.ThreadSafeLocation.Expand(50, 100, 50))
-                        .FilterByTypeSet(config.TypeSetsToUse.ToArray());
-
-                    var harvestableCount = 0;
-                    foreach (var harvestable in harvestables.AsList)
-                    {
-                        var bounds = harvestable.InteractBounds;
-                        if (bounds != null)
-                        {
-                            bounds.Render(Api, Color.SkyBlue, Color.SkyBlue.MoreTransparent());
-                        }
-
-                        harvestableCount += 1;
-                        if (harvestableCount >= 20)
-                        {
-                            break;
-                        }
-                    }
-
-                    foreach (var mob in Entities
-                        .MobChain
-                        .FilterByArea(lp.ThreadSafeLocation.Expand(50, 100, 50))
-                        .AsList)
-                    {
-                        var drops = mob
-                            .HarvestableDropChain
-                            .FilterByTypeSet(config.TypeSetsToUse.ToArray())
-                            .AsList;
-
-                        if (drops.Count > 0)
-                        {
-                            mob.ThreadSafeLocation.Expand(3, 3, 3).Render(Api, Color.SkyBlue, Color.SkyBlue.MoreTransparent());
-                        }
-                    }
-                }
-            }
-
+            
             foreach (var p in config.RoamPoints)
             {
                 p.Expand(3, 3, 3).Render(Api, Color.Red, Color.Red.MoreTransparent());
