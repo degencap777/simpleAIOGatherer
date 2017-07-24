@@ -166,14 +166,19 @@ namespace Ennui.Script.Official
         private float GetWeightThreshold()
         {
             var weightThreshold = 98;
-            if (Equipment.HasItemContainingName("_MOUNT_HORSE"))
-            {
-                weightThreshold = 130;
-            }
-            else if (Equipment.HasItemContainingName("UNIQUE_MOUNT_CART_STARTERPACK"))
+            if (Equipment.HasItemContainingName("UNIQUE_MOUNT_CART_STARTERPACK"))
             {
                 weightThreshold = 1880;
             }
+            if (Equipment.HasItemContainingName("UNIQUE_MOUNT_HORSE_STARTERPACK"))
+            {
+                weightThreshold = 450;
+            }
+            else if (Equipment.HasItemContainingName("_MOUNT_HORSE"))
+            {
+                weightThreshold = 130;
+            }
+            
             else if (Equipment.HasItemContainingName("_MOUNT_OX"))
             {
                 weightThreshold = 450;
