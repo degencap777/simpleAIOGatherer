@@ -38,21 +38,29 @@ namespace Ennui.Script.Official
             g.DrawString("http://ennui.ninja - Simple AIO Gatherer", 20, 100);
             g.DrawString(string.Format("Runtime: {0}", Time.FormatElapsed(timer.ElapsedMs)), 20, 115);
             g.DrawString(string.Format("State: {0}", context.State), 20, 130);
+
+            var lp = Players.LocalPlayer;
+            if (lp != null)
+            {
+                if (config.ResourceClusterName == Game.ClusterName)
+                {
+                    foreach (var p in config.RoamPoints)
+                    {
+                        p.Expand(3, 3, 3).Render(Api, Color.Red, Color.Red.MoreTransparent());
+                    }
+                }
+
+                if (config.VaultArea != null && config.CityClusterName == Game.ClusterName)
+                {
+                    config.VaultArea.Render(Api, Color.Cyan, Color.Cyan.MoreTransparent());
+                }
+
+                if (config.RepairArea != null && config.CityClusterName == Game.ClusterName)
+                {
+                    config.RepairArea.Render(Api, Color.Purple, Color.Purple.MoreTransparent());
+                }
+            }
             
-            foreach (var p in config.RoamPoints)
-            {
-                p.Expand(3, 3, 3).Render(Api, Color.Red, Color.Red.MoreTransparent());
-            }
-
-            if (config.VaultArea != null)
-            {
-                config.VaultArea.Render(Api, Color.Cyan, Color.Cyan.MoreTransparent());
-            }
-
-            if (config.RepairArea != null)
-            {
-                config.RepairArea.Render(Api, Color.Purple, Color.Purple.MoreTransparent());
-            }
         }
     }
 }
