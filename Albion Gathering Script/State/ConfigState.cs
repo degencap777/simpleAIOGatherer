@@ -81,8 +81,7 @@ namespace Ennui.Script.Official
 
                         if (tierGroupsBroken.Length == 2)
                         {
-                            rarity = 0;
-                            if (!int.TryParse(tierGroupsBroken[0], out rarity))
+                            if (!int.TryParse(tierGroupsBroken[1], out rarity))
                             {
                                 Logging.Log("Failed to parse rarity " + input);
                             }
