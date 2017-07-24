@@ -67,10 +67,16 @@ namespace Ennui.Script.Official
                 self.CastOnSelf(dmgSelfSpell.Slot);
             }
 
-            var crowdControlSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Ground).FilterByCategory(SpellCategory.CrowdControl).First;
-            if (crowdControlSpell != null)
+            var crowdControlGroundSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Ground).FilterByCategory(SpellCategory.CrowdControl).First;
+            if (crowdControlGroundSpell != null)
             {
-                self.CastAt(crowdControlSpell.Slot, target.ThreadSafeLocation);
+                self.CastAt(crowdControlGroundSpell.Slot, target.ThreadSafeLocation);
+            }
+
+            var crowdControlEnemySpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Enemy).FilterByCategory(SpellCategory.CrowdControl).First;
+            if (crowdControlEnemySpell != null)
+            {
+                self.CastOn(crowdControlEnemySpell.Slot, target);
             }
 
             if (self.HealthPercentage <= 50)
