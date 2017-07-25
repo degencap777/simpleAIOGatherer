@@ -108,7 +108,7 @@ namespace Ennui.Script.Official
                     var resourceMobs = new List<IMobObject>();
                     foreach (var ent in Entities.MobChain.ExcludeByArea(territoryAreas.ToArray()).ExcludeWithIds(blacklist.ToArray()).AsList)
                     {
-                        var drops = ent.HarvestableDropChain.FilterByTypeSet(config.TypeSetsToUse.ToArray()).AsList;
+                        var drops = ent.HarvestableDropChain.FilterByTypeSet(SafeTypeSet.BatchConvert(config.TypeSetsToUse)).AsList;
                         Logging.Log(drops.ToString());
                         if (drops.Count > 0)
                         {
@@ -129,7 +129,7 @@ namespace Ennui.Script.Official
                 .FilterDepleted()
                 .ExcludeWithIds(blacklist.ToArray())
                 .ExcludeByArea(territoryAreas.ToArray())
-                .FilterByTypeSet(config.TypeSetsToUse.ToArray())
+                .FilterByTypeSet(SafeTypeSet.BatchConvert(config.TypeSetsToUse))
                 .FilterWithSetupState(HarvestableSetupState.Invalid)
                 .Closest(center);
 
@@ -158,33 +158,9 @@ namespace Ennui.Script.Official
             }
             if (config.RoamPoints.Count == 1)
             {
-                return config.RoamPoints[0];
+                return config.RoamPoints[0].RealVector3();
             }
-            return config.RoamPoints[rand.Next(config.RoamPoints.Count)];
-        }
-
-        private float GetWeightThreshold()
-        {
-            var weightThreshold = 98;
-            if (Equipment.HasItemContainingName("UNIQUE_MOUNT_CART_STARTERPACK"))
-            {
-                weightThreshold = 1880;
-            }
-            if (Equipment.HasItemContainingName("UNIQUE_MOUNT_HORSE_STARTERPACK"))
-            {
-                weightThreshold = 450;
-            }
-            else if (Equipment.HasItemContainingName("_MOUNT_HORSE"))
-            {
-                weightThreshold = 130;
-            }
-            
-            else if (Equipment.HasItemContainingName("_MOUNT_OX"))
-            {
-                weightThreshold = 450;
-            }
-
-            return weightThreshold;
+            return config.RoamPoints[rand.Next(config.RoamPoints.Count)].RealVector3();
         }
 
         private Boolean ShouldUseMount(float heldWeight, float dist)
@@ -235,7 +211,7 @@ namespace Ennui.Script.Official
             }
 
             var localLocation = localPlayer.ThreadSafeLocation;
-            if (!config.GatherArea.Contains(localLocation))
+            if (!config.GatherArea.RealArea(Api).Contains(localLocation))
             {
                 context.State = "Walking to gather area...";
 
@@ -254,7 +230,7 @@ namespace Ennui.Script.Official
             }
             
             var heldWeight = localPlayer.WeighedDownPercent;
-            if (heldWeight >= GetWeightThreshold())
+            if (heldWeight >= localPlayer.MaxCarryWeight)
             {
                 Logging.Log("Local player has too much weight, banking!", LogLevel.Atom);
                 parent.EnterState("bank");

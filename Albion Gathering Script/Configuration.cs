@@ -6,26 +6,26 @@ namespace Ennui.Script.Official
 {
     public class Configuration
     {
-        public string CityClusterName { get; set; }
-        public string ResourceClusterName { get; set; }
+        public string CityClusterName = "";
+        public string ResourceClusterName = "";
 
-        public Area GatherArea { get; set; }
-        public Area VaultArea { get; set; }
-        public Vector3f VaultDest { get; set; }
-        public Area RepairArea { get; set; }
-        public Vector3f RepairDest { get; set; }
+        public SafeMapArea GatherArea;
+        public SafeMapArea VaultArea;
+        public SafeMapArea RepairArea;
+        public SafeVector3 VaultDest;
+        public SafeVector3 RepairDest;
 
-        public string LoginCharacterName { get; set; } = "";
-        public int GatherAttemptsTimeout { get; set; } = 6;
+        public string LoginCharacterName = "";
+        public int GatherAttemptsTimeout = 6;
 
-        public bool AttackMobs { get; set; } = false;
-        public bool IgnoreMobsOnLowHealth { get; set; } = true;
-        public int IgnoreMobHealthPercent { get; set; } = 60;
+        public bool AttackMobs = false;
+        public bool IgnoreMobsOnLowHealth = true;
+        public int IgnoreMobHealthPercent = 60;
 
-        public bool FleeOnLowHealth { get; set; } = true;
-        public int FleeHealthPercent { get; set; } = 30;
+        public bool FleeOnLowHealth = true;
+        public int FleeHealthPercent = 30;
 
-        public List<TypeSet> TypeSetsToUse { get; set; } = new List<TypeSet>();
-        public List<Vector3f> RoamPoints { get; set; } = new List<Vector3f>();
+        public List<SafeTypeSet> TypeSetsToUse = new List<SafeTypeSet>();
+        public List<SafeVector3> RoamPoints = new List<SafeVector3>();
     }
 }

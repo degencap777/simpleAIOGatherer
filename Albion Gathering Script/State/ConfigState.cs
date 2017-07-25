@@ -4,6 +4,7 @@ using Ennui.Api.Gui;
 using Ennui.Api.Meta;
 using Ennui.Api.Script;
 using System;
+using System.Collections.Generic;
 
 namespace Ennui.Script.Official
 {
@@ -19,16 +20,16 @@ namespace Ennui.Script.Official
         private ICheckBox harvestFiberCheckBox;
         private IInputField harvestHideInput;
         private ICheckBox harvestHideCheckBox;
-        private IInputField harvestStoneInput;
-        private ICheckBox harvestStoneCheckBox;
+        private IInputField harvestRockInput;
+        private ICheckBox harvestRockCheckBox;
 
         private ICheckBox killMobsCheckBox;
 
         private ILabel resourceClusterLabel;
-        private IInputField resourceClusterInput;
+        private ILabel resourceClusterInput;
 
         private ILabel cityClusterLabel;
-        private IInputField cityClusterInput;
+        private ILabel cityClusterInput;
 
         private ICheckBox autoLoginCheckbox;
         private ILabel characterNameLabel;
@@ -49,6 +50,51 @@ namespace Ennui.Script.Official
             this.context = context;
         }
 
+        public void UpdateForConfig()
+        {
+            var sets = new Dictionary<ResourceType, List<string>>();
+            sets.Add(ResourceType.Fiber, new List<string>());
+            sets.Add(ResourceType.Hide, new List<string>());
+            sets.Add(ResourceType.Ore, new List<string>());
+            sets.Add(ResourceType.Rock, new List<string>());
+            sets.Add(ResourceType.Wood, new List<string>());
+            
+            foreach (var ts in config.TypeSetsToUse)
+            {
+                if (sets.ContainsKey(ts.Type))
+                {
+                    Logging.Log("Adding typeset " + (ts.MaxTier + ts.MaxRarity > 0 ? ("." + ts.MaxRarity) : ""));
+                    sets[ts.Type].Add(ts.MaxTier + ((ts.MinRarity > 0) ? ("." + ts.MaxRarity) : ""));
+                }
+            }
+
+            foreach (var s in sets[ResourceType.Fiber]) Logging.Log(s);
+            foreach (var s in sets[ResourceType.Hide]) Logging.Log(s);
+            foreach (var s in sets[ResourceType.Ore]) Logging.Log(s);
+            foreach (var s in sets[ResourceType.Rock]) Logging.Log(s);
+            foreach (var s in sets[ResourceType.Wood]) Logging.Log(s);
+
+            if (sets[ResourceType.Fiber].Count > 0)
+            harvestFiberInput.SetText(string.Join(",", sets[ResourceType.Fiber].ToArray()));
+
+            if (sets[ResourceType.Hide].Count > 0)
+                harvestHideInput.SetText(string.Join(",", sets[ResourceType.Hide].ToArray()));
+
+            if (sets[ResourceType.Ore].Count > 0)
+                harvestOreInput.SetText(string.Join(",", sets[ResourceType.Ore].ToArray()));
+
+            if (sets[ResourceType.Rock].Count > 0)
+                harvestRockInput.SetText(string.Join(",", sets[ResourceType.Rock].ToArray()));
+
+            if (sets[ResourceType.Wood].Count > 0)
+                harvestWoodInput.SetText(string.Join(",", sets[ResourceType.Wood].ToArray()));
+
+            killMobsCheckBox.SetSelected(config.AttackMobs);
+            characterNameInput.SetText(config.LoginCharacterName);
+            resourceClusterInput.SetText(config.ResourceClusterName);
+            cityClusterInput.SetText(config.CityClusterName);
+        }
+
         private void AddTiers(ResourceType type, string input)
         {
             if (input.Length == 0)
@@ -67,37 +113,49 @@ namespace Ennui.Script.Official
                         continue;
                     }
 
-                    var tierGroupsBroken = filtered.Split('.');
+                    var targetInfo = filtered.Split('.');
 
                     var tier = 0;
-                    var rarity = 0;
-                    if (tierGroupsBroken.Length > 0)
+                    if (targetInfo.Length >= 1)
                     {
-                        tier = 0;
-                        if (!int.TryParse(tierGroupsBroken[0], out tier))
+                        if (!int.TryParse(targetInfo[0], out tier))
                         {
                             Logging.Log("Failed to parse tier " + input);
                         }
+                    }
 
-                        if (tierGroupsBroken.Length == 2)
+                    var rarity = 0;
+                    if (targetInfo.Length >= 2)
+                    {
+                        if (!int.TryParse(targetInfo[1], out rarity))
                         {
-                            if (!int.TryParse(tierGroupsBroken[1], out rarity))
-                            {
-                                Logging.Log("Failed to parse rarity " + input);
-                            }
-                        }
-                        else
-                        {
-                            Logging.Log("Invalid rarity format " + input);
+                            Logging.Log("Failed to parse rarity " + input);
                         }
                     }
 
-                    config.TypeSetsToUse.Add(new TypeSet(tier, tier, type, rarity, rarity));
+                    config.TypeSetsToUse.Add(new SafeTypeSet(tier, tier, type, rarity, rarity));
                 }
             }
             catch (Exception e)
             {
+                context.State = "Failed to parise tiers " + input;
                 context.State = "Failed to parse tiers " + input;
+            }
+        }
+
+        private void SaveConfig()
+        {
+            try
+            {
+                if (Files.Exists("simple-aio-gatherer.json"))
+                {
+                    Files.Delete("simple-aio-gatherer.json");
+                }
+                Files.WriteText("simple-aio-gatherer.json", Codecs.ToJson(config));
+            }
+            catch (Exception e)
+            {
+                Logging.Log("Failed to save config " + e, LogLevel.Error);
             }
         }
 
@@ -110,41 +168,46 @@ namespace Ennui.Script.Official
             {
                 AddTiers(ResourceType.Wood, harvestWoodInput.GetText());
             }
-            
+
             if (harvestOreCheckBox.IsSelected())
             {
                 AddTiers(ResourceType.Ore, harvestOreInput.GetText());
             }
-            
+
             if (harvestFiberCheckBox.IsSelected())
             {
                 AddTiers(ResourceType.Fiber, harvestFiberInput.GetText());
             }
-            
+
             if (harvestHideCheckBox.IsSelected())
             {
                 AddTiers(ResourceType.Hide, harvestHideInput.GetText());
             }
-            
-            if (harvestStoneCheckBox.IsSelected())
+
+            if (harvestRockCheckBox.IsSelected())
             {
-                AddTiers(ResourceType.Rock, harvestStoneInput.GetText());
+                AddTiers(ResourceType.Rock, harvestRockInput.GetText());
+            }
+
+            if (config.TypeSetsToUse.Count == 0)
+            {
+                context.State = "No type sets to gather!";
+                return;
             }
 
             config.AttackMobs = killMobsCheckBox.IsSelected();
-            
-            primaryPanel.Destroy();
-            
-            config.GatherArea = new MapArea(Api, config.ResourceClusterName, new Vector3f(-10000, -10000, -10000), new Vector3f(10000, 10000, 10000));
-
+            config.GatherArea = new SafeMapArea(config.ResourceClusterName, new Vector3f(-10000, -10000, -10000), new Vector3f(10000, 10000, 10000));
             if (autoLoginCheckbox.IsSelected())
             {
                 config.LoginCharacterName = characterNameInput.GetText();
             }
 
+            SaveConfig();
+
+            primaryPanel.Destroy();
             parent.EnterState("resolve");
         }
-        
+
         public override bool OnStart(IScriptEngine se)
         {
             context.State = "Configuring...";
@@ -168,8 +231,8 @@ namespace Ennui.Script.Official
 
                 harvestWoodInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestWoodInput);
-                harvestWoodInput.SetPosition(-60, 150, 0);
-                harvestWoodInput.SetSize(100, 25);
+                harvestWoodInput.SetPosition(-70, 150, 0);
+                harvestWoodInput.SetSize(120, 25);
 
                 harvestWoodCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestWoodCheckBox);
@@ -180,8 +243,8 @@ namespace Ennui.Script.Official
 
                 harvestOreInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestOreInput);
-                harvestOreInput.SetPosition(-60, 120, 0);
-                harvestOreInput.SetSize(100, 25);
+                harvestOreInput.SetPosition(-70, 120, 0);
+                harvestOreInput.SetSize(120, 25);
 
                 harvestOreCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestOreCheckBox);
@@ -192,8 +255,8 @@ namespace Ennui.Script.Official
 
                 harvestFiberInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestFiberInput);
-                harvestFiberInput.SetPosition(-60, 90, 0);
-                harvestFiberInput.SetSize(100, 25);
+                harvestFiberInput.SetPosition(-70, 90, 0);
+                harvestFiberInput.SetSize(120, 25);
 
                 harvestFiberCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestFiberCheckBox);
@@ -204,8 +267,8 @@ namespace Ennui.Script.Official
 
                 harvestHideInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestHideInput);
-                harvestHideInput.SetPosition(-60, 60, 0);
-                harvestHideInput.SetSize(100, 25);
+                harvestHideInput.SetPosition(-70, 60, 0);
+                harvestHideInput.SetSize(120, 25);
 
                 harvestHideCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestHideCheckBox);
@@ -214,21 +277,21 @@ namespace Ennui.Script.Official
                 harvestHideCheckBox.SetText("Harvest Hide");
                 harvestHideCheckBox.SetSelected(true);
 
-                harvestStoneInput = Factories.CreateGuiInputField();
-                primaryPanel.Add(harvestStoneInput);
-                harvestStoneInput.SetPosition(-60, 30, 0);
-                harvestStoneInput.SetSize(100, 25);
+                harvestRockInput = Factories.CreateGuiInputField();
+                primaryPanel.Add(harvestRockInput);
+                harvestRockInput.SetPosition(-70, 30, 0);
+                harvestRockInput.SetSize(120, 25);
 
-                harvestStoneCheckBox = Factories.CreateGuiCheckBox();
-                primaryPanel.Add(harvestStoneCheckBox);
-                harvestStoneCheckBox.SetPosition(60, 30, 0);
-                harvestStoneCheckBox.SetSize(100, 25);
-                harvestStoneCheckBox.SetText("Harvest Rock");
-                harvestStoneCheckBox.SetSelected(true);
+                harvestRockCheckBox = Factories.CreateGuiCheckBox();
+                primaryPanel.Add(harvestRockCheckBox);
+                harvestRockCheckBox.SetPosition(60, 30, 0);
+                harvestRockCheckBox.SetSize(100, 25);
+                harvestRockCheckBox.SetText("Harvest Rock");
+                harvestRockCheckBox.SetSelected(true);
 
                 killMobsCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(killMobsCheckBox);
-                killMobsCheckBox.SetPosition(-60, -5, 0);
+                killMobsCheckBox.SetPosition(-70, -5, 0);
                 killMobsCheckBox.SetSize(125, 25);
                 killMobsCheckBox.SetText("Kill Mobs");
                 killMobsCheckBox.SetSelected(true);
@@ -246,7 +309,7 @@ namespace Ennui.Script.Official
                 resourceClusterLabel.SetSize(120, 25);
                 resourceClusterLabel.SetText("Resource Cluster");
 
-                resourceClusterInput = Factories.CreateGuiInputField();
+                resourceClusterInput = Factories.CreateGuiLabel();
                 primaryPanel.Add(resourceClusterInput);
                 resourceClusterInput.SetPosition(-70, -55, 0);
                 resourceClusterInput.SetSize(120, 25);
@@ -257,7 +320,7 @@ namespace Ennui.Script.Official
                 cityClusterLabel.SetSize(120, 25);
                 cityClusterLabel.SetText("City Cluster");
 
-                cityClusterInput = Factories.CreateGuiInputField();
+                cityClusterInput = Factories.CreateGuiLabel();
                 primaryPanel.Add(cityClusterInput);
                 cityClusterInput.SetPosition(70, -55, 0);
                 cityClusterInput.SetSize(120, 25);
@@ -286,9 +349,9 @@ namespace Ennui.Script.Official
                         var loc = local.ThreadSafeLocation;
                         var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set vault loc to " + loc.X + " " + loc.Y + " " + loc.Z);
-                        cityClusterInput.SetText(Game.Cluster.Name);
-                        config.VaultDest = new Vector3f(loc.X, loc.Y, loc.Z);
-                        config.VaultArea = new Area(area.Start, area.End);
+                        cityClusterInput.SetText(Game.ClusterName);
+                        config.VaultDest = new SafeVector3(new Vector3f(loc.X, loc.Y, loc.Z));
+                        config.VaultArea = new SafeMapArea(Game.Cluster.Name, new Area(area.Start, area.End));
                     }
                 });
 
@@ -305,9 +368,9 @@ namespace Ennui.Script.Official
                         var loc = local.ThreadSafeLocation;
                         var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set repair loc to " + loc.X + " " + loc.Y + " " + loc.Z);
-                        cityClusterInput.SetText(Game.Cluster.Name);
-                        config.RepairDest = new Vector3f(loc.X, loc.Y, loc.Z);
-                        config.RepairArea = new Area(area.Start, area.End);
+                        cityClusterInput.SetText(Game.ClusterName);
+                        config.RepairDest = new SafeVector3(new Vector3f(loc.X, loc.Y, loc.Z));
+                        config.RepairArea = new SafeMapArea(Game.ClusterName, new Area(area.Start, area.End));
                     }
                 });
 
@@ -323,8 +386,8 @@ namespace Ennui.Script.Official
                     {
                         var loc = local.ThreadSafeLocation;
                         Logging.Log("Add roam point " + loc.X + " " + loc.Y + " " + loc.Z);
-                        resourceClusterInput.SetText(Game.Cluster.Name);
-                        config.RoamPoints.Add(new Vector3f(loc.X, loc.Y, loc.Z));
+                        resourceClusterInput.SetText(Game.ClusterName);
+                        config.RoamPoints.Add(new SafeVector3(new Vector3f(loc.X, loc.Y, loc.Z)));
                     }
                 });
 
@@ -349,6 +412,8 @@ namespace Ennui.Script.Official
 
                     SelectedStart();
                 });
+
+                UpdateForConfig();
             });
 
             return true;

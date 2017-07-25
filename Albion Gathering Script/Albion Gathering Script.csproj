@@ -46,6 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaExtensions.cs" />
+    <Compile Include="Serialization\SafeArea.cs" />
+    <Compile Include="Serialization\SafeMapArea.cs" />
+    <Compile Include="Serialization\SafeTypeSet.cs" />
+    <Compile Include="Serialization\SafeVector3.cs" />
     <Compile Include="State\BankState.cs" />
     <Compile Include="State\CombatState.cs" />
     <Compile Include="State\ConfigState.cs" />
@@ -58,5 +62,6 @@
     <Compile Include="State\RepairState.cs" />
     <Compile Include="State\ResolveState.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

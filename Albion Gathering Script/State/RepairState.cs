@@ -24,13 +24,13 @@ namespace Ennui.Script.Official
                 return 10_000;
             }
 
-            if (!config.RepairArea.Contains(localPlayer.ThreadSafeLocation))
+            if (!config.RepairArea.RealArea(Api).Contains(localPlayer.ThreadSafeLocation))
             {
                 context.State = "Walking to repair area...";
 
                 var config = new PointPathFindConfig();
                 config.ClusterName = this.config.CityClusterName;
-                config.Point = this.config.RepairDest;
+                config.Point = this.config.RepairDest.RealVector3();
                 config.UseWeb = false;
                 config.UseMount = true;
                 Movement.PathFindTo(config);
@@ -44,7 +44,7 @@ namespace Ennui.Script.Official
 
             if (!Api.HasBrokenItems())
             {
-                if (localPlayer.WeighedDownPercent >= 90)
+                if (localPlayer.WeighedDownPercent >= 30)
                 {
                     parent.EnterState("bank");
                 }

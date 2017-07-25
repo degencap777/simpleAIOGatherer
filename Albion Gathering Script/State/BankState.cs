@@ -26,14 +26,14 @@ namespace Ennui.Script.Official
                 return 10_000;
             }
 
-            if (!config.VaultArea.Contains(localPlayer.ThreadSafeLocation))
+            if (!config.VaultArea.RealArea(Api).Contains(localPlayer.ThreadSafeLocation))
             {
                 context.State = "Walking to vault...";
 
                 var config = new PointPathFindConfig();
                 config.ClusterName = this.config.CityClusterName;
                 config.UseWeb = false;
-                config.Point = this.config.VaultDest;
+                config.Point = this.config.VaultDest.RealVector3();
                 config.UseMount = true;
 
                 Movement.PathFindTo(config);
