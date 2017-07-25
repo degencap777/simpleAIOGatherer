@@ -18,11 +18,10 @@ namespace Ennui.Script.Official
 
         private void HandleSpellRotation(ILocalPlayerObject self, IEntityObject target)
         {
-            if (self.CurrentActionState == ActionState.Casting)
+            if (self.CurrentActionState != ActionState.Idle)
             {
                 return;
             }
-
             context.State = "Casting spell!";
 
             var buffSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Buff).First;
