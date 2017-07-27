@@ -64,15 +64,11 @@ namespace Ennui.Script.Official
                 if (sets.ContainsKey(ts.Type))
                 {
                     Logging.Log("Adding typeset " + (ts.MaxTier + ts.MaxRarity > 0 ? ("." + ts.MaxRarity) : ""));
+                    var input = ts.MaxTier + "." + ts.MaxRarity;
+                    
                     sets[ts.Type].Add(ts.MaxTier + ((ts.MinRarity > 0) ? ("." + ts.MaxRarity) : ""));
                 }
             }
-
-            foreach (var s in sets[ResourceType.Fiber]) Logging.Log(s);
-            foreach (var s in sets[ResourceType.Hide]) Logging.Log(s);
-            foreach (var s in sets[ResourceType.Ore]) Logging.Log(s);
-            foreach (var s in sets[ResourceType.Rock]) Logging.Log(s);
-            foreach (var s in sets[ResourceType.Wood]) Logging.Log(s);
 
             if (sets[ResourceType.Fiber].Count > 0)
             harvestFiberInput.SetText(string.Join(",", sets[ResourceType.Fiber].ToArray()));
@@ -93,6 +89,8 @@ namespace Ennui.Script.Official
             characterNameInput.SetText(config.LoginCharacterName);
             resourceClusterInput.SetText(config.ResourceClusterName);
             cityClusterInput.SetText(config.CityClusterName);
+
+            config.TypeSetsToUse.Clear();
         }
 
         private void AddTiers(ResourceType type, string input)
