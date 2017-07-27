@@ -187,6 +187,25 @@ namespace Ennui.Script.Official
             return useMount;
         }
 
+        private float GetWeightThreshold()
+        {
+            var weightThreshold = 98;
+            if (Equipment.HasItemContainingName("_MOUNT_HORSE"))
+            {
+                weightThreshold = 130;
+            }
+            else if (Equipment.HasItemContainingName("UNIQUE_MOUNT_CART_STARTERPACK"))
+            {
+                weightThreshold = 1880;
+            }
+            else if (Equipment.HasItemContainingName("_MOUNT_OX"))
+            {
+                weightThreshold = 450;
+            }
+
+            return weightThreshold;
+        }
+
         public override int OnLoop(IScriptEngine se)
         {
             if (config.RepairDest != null && Api.HasBrokenItems())
@@ -228,9 +247,9 @@ namespace Ennui.Script.Official
 
                 return 0;
             }
-            
+
             var heldWeight = localPlayer.WeighedDownPercent;
-            if (heldWeight >= localPlayer.MaxCarryWeight)
+            if (heldWeight >= GetWeightThreshold())
             {
                 Logging.Log("Local player has too much weight, banking!", LogLevel.Atom);
                 parent.EnterState("bank");
