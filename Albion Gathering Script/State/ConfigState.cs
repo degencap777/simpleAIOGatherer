@@ -92,9 +92,12 @@ namespace Ennui.Script.Official
             harvestStoneCheckBox.SetSelected(config.GatherStone);
 
             killMobsCheckBox.SetSelected(config.AttackMobs);
+            autoLoginCheckbox.SetSelected(config.AutoRelogin);
+
             characterNameInput.SetText(config.LoginCharacterName);
             resourceClusterInput.SetText(config.ResourceClusterName);
             cityClusterInput.SetText(config.CityClusterName);
+
 
             config.TypeSetsToUse.Clear();
         }
@@ -206,6 +209,8 @@ namespace Ennui.Script.Official
             config.GatherStone = harvestStoneCheckBox.IsSelected();
 
             config.AttackMobs = killMobsCheckBox.IsSelected();
+            config.AutoRelogin = autoLoginCheckbox.IsSelected();
+            config.LoginCharacterName = characterNameInput.GetText();
             config.GatherArea = new SafeMapArea(config.ResourceClusterName, new Vector3f(-10000, -10000, -10000), new Vector3f(10000, 10000, 10000));
             if (autoLoginCheckbox.IsSelected())
             {

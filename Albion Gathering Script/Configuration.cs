@@ -15,6 +15,7 @@ namespace Ennui.Script.Official
         public SafeVector3 VaultDest;
         public SafeVector3 RepairDest;
 
+        public bool AutoRelogin = false;
         public string LoginCharacterName = "";
         public int GatherAttemptsTimeout = 6;
 
