@@ -233,7 +233,6 @@ namespace Ennui.Script.Official
             if (!config.GatherArea.RealArea(Api).Contains(localLocation))
             {
                 context.State = "Walking to gather area...";
-
                 Logging.Log("Local player not in gather area, walk there!", LogLevel.Atom);
 
                 var moveConfig = new PointPathFindConfig();
@@ -328,6 +327,19 @@ namespace Ennui.Script.Official
                     config.UseWeb = false;
                     config.Target = harvestableTarget;
                     config.UseMount = ShouldUseMount(heldWeight, dist);
+                    config.ExitHook = (() =>
+                     {
+                         var lpo = Players.LocalPlayer;
+                         if (lpo == null) return false;
+
+                         if (!lpo.IsMounted && lpo.IsUnderAttack)
+                         {
+                             parent.EnterState("combat");
+                             return true;
+                         }
+
+                         return false;
+                     });
 
                     var result = Movement.PathFindTo(config);
                     if (result == PathFindResult.Failed)
