@@ -46,7 +46,7 @@ namespace Ennui.Script.Official
 
             AddHook(() =>
             {
-                return LoginWindow.IsOpen || CharacterSelectWindow.IsOpen;
+                return config.AutoRelogin && LoginWindow.IsOpen || CharacterSelectWindow.IsOpen;
             });
 
             AddState("config", new ConfigState(config, context));
@@ -62,12 +62,14 @@ namespace Ennui.Script.Official
         public override void OnPaint(IScriptEngine se, GraphicContext g)
         {
             g.SetColor(new Color(0.3f, 0.3f, 0.3f, 1.0f));
-            g.FillRect(15, 100, 265, 165);
+            g.FillRect(15, 100, 265, 195);
             g.SetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
             g.DrawString("http://ennui.ninja - Simple AIO Gatherer", 20, 100);
             g.DrawString(string.Format("Runtime: {0}", Time.FormatElapsed(timer.ElapsedMs)), 20, 115);
             g.DrawString(string.Format("State: {0}", context.State), 20, 130);
             g.DrawString(string.Format("Max hold weight: {0}", config.MaxHoldWeight), 20, 145);
+            g.DrawString(string.Format("City cluster: {0}", config.CityClusterName), 20, 160);
+            g.DrawString(string.Format("Resource cluster: {0}", config.ResourceClusterName), 20, 175);
 
             if (config != null)
             {

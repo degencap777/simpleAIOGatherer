@@ -25,12 +25,6 @@ namespace Ennui.Script.Official
 
         private ICheckBox killMobsCheckBox;
 
-        private ILabel resourceClusterLabel;
-        private ILabel resourceClusterInput;
-
-        private ILabel cityClusterLabel;
-        private ILabel cityClusterInput;
-
         private ICheckBox autoLoginCheckbox;
         private ILabel characterNameLabel;
         private IInputField characterNameInput;
@@ -95,9 +89,6 @@ namespace Ennui.Script.Official
             autoLoginCheckbox.SetSelected(config.AutoRelogin);
 
             characterNameInput.SetText(config.LoginCharacterName);
-            resourceClusterInput.SetText(config.ResourceClusterName);
-            cityClusterInput.SetText(config.CityClusterName);
-
 
             config.TypeSetsToUse.Clear();
         }
@@ -168,9 +159,6 @@ namespace Ennui.Script.Official
 
         private void SelectedStart()
         {
-            config.CityClusterName = cityClusterInput.GetText();
-            config.ResourceClusterName = resourceClusterInput.GetText();
-
             if (harvestWoodCheckBox.IsSelected())
             {
                 AddTiers(ResourceType.Wood, harvestWoodInput.GetText());
@@ -233,127 +221,105 @@ namespace Ennui.Script.Official
 
                 primaryPanel = Factories.CreateGuiPanel();
                 GuiScene.Add(primaryPanel);
-                primaryPanel.SetSize(300, 390);
+                primaryPanel.SetSize(300, 320);
                 primaryPanel.SetPosition(155, (screenSize.Y / 2), 0);
                 primaryPanel.SetAnchor(new Vector2f(0.0f, 0.0f), new Vector2f(0.0f, 0.0f));
                 primaryPanel.SetPivot(new Vector2f(0.5f, 0.5f));
 
                 tierLabel = Factories.CreateGuiLabel();
                 primaryPanel.Add(tierLabel);
-                tierLabel.SetPosition(-60, 175, 0);
+                tierLabel.SetPosition(-60, 145, 0);
                 tierLabel.SetSize(100, 25);
                 tierLabel.SetText("Tier");
 
                 harvestWoodInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestWoodInput);
-                harvestWoodInput.SetPosition(-70, 150, 0);
+                harvestWoodInput.SetPosition(-70, 125, 0);
                 harvestWoodInput.SetSize(120, 25);
 
                 harvestWoodCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestWoodCheckBox);
-                harvestWoodCheckBox.SetPosition(60, 150, 0);
+                harvestWoodCheckBox.SetPosition(60, 125, 0);
                 harvestWoodCheckBox.SetSize(100, 25);
                 harvestWoodCheckBox.SetText("Harvest Wood");
                 harvestWoodCheckBox.SetSelected(true);
 
                 harvestOreInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestOreInput);
-                harvestOreInput.SetPosition(-70, 120, 0);
+                harvestOreInput.SetPosition(-70, 100, 0);
                 harvestOreInput.SetSize(120, 25);
 
                 harvestOreCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestOreCheckBox);
-                harvestOreCheckBox.SetPosition(60, 120, 0);
+                harvestOreCheckBox.SetPosition(60, 100, 0);
                 harvestOreCheckBox.SetSize(100, 25);
                 harvestOreCheckBox.SetText("Harvest Ore");
                 harvestOreCheckBox.SetSelected(true);
 
                 harvestFiberInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestFiberInput);
-                harvestFiberInput.SetPosition(-70, 90, 0);
+                harvestFiberInput.SetPosition(-70, 75, 0);
                 harvestFiberInput.SetSize(120, 25);
 
                 harvestFiberCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestFiberCheckBox);
-                harvestFiberCheckBox.SetPosition(60, 90, 0);
+                harvestFiberCheckBox.SetPosition(60, 75, 0);
                 harvestFiberCheckBox.SetSize(100, 25);
                 harvestFiberCheckBox.SetText("Harvest Fiber");
                 harvestFiberCheckBox.SetSelected(true);
 
                 harvestHideInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestHideInput);
-                harvestHideInput.SetPosition(-70, 60, 0);
+                harvestHideInput.SetPosition(-70, 50, 0);
                 harvestHideInput.SetSize(120, 25);
 
                 harvestHideCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestHideCheckBox);
-                harvestHideCheckBox.SetPosition(60, 60, 0);
+                harvestHideCheckBox.SetPosition(60, 50, 0);
                 harvestHideCheckBox.SetSize(100, 25);
                 harvestHideCheckBox.SetText("Harvest Hide");
                 harvestHideCheckBox.SetSelected(true);
 
                 harvestStoneInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(harvestStoneInput);
-                harvestStoneInput.SetPosition(-70, 30, 0);
+                harvestStoneInput.SetPosition(-70, 25, 0);
                 harvestStoneInput.SetSize(120, 25);
 
                 harvestStoneCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(harvestStoneCheckBox);
-                harvestStoneCheckBox.SetPosition(60, 30, 0);
+                harvestStoneCheckBox.SetPosition(60, 25, 0);
                 harvestStoneCheckBox.SetSize(100, 25);
                 harvestStoneCheckBox.SetText("Harvest Stone");
                 harvestStoneCheckBox.SetSelected(true);
 
                 killMobsCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(killMobsCheckBox);
-                killMobsCheckBox.SetPosition(-70, -5, 0);
+                killMobsCheckBox.SetPosition(-70, 0, 0);
                 killMobsCheckBox.SetSize(125, 25);
                 killMobsCheckBox.SetText("Kill Mobs");
                 killMobsCheckBox.SetSelected(true);
 
                 autoLoginCheckbox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(autoLoginCheckbox);
-                autoLoginCheckbox.SetPosition(70, -5, 0);
+                autoLoginCheckbox.SetPosition(60, 0, 0);
                 autoLoginCheckbox.SetSize(125, 25);
                 autoLoginCheckbox.SetText("Auto Relogin");
                 autoLoginCheckbox.SetSelected(true);
 
-                resourceClusterLabel = Factories.CreateGuiLabel();
-                primaryPanel.Add(resourceClusterLabel);
-                resourceClusterLabel.SetPosition(-70, -35, 0);
-                resourceClusterLabel.SetSize(120, 25);
-                resourceClusterLabel.SetText("Resource Cluster");
-
-                resourceClusterInput = Factories.CreateGuiLabel();
-                primaryPanel.Add(resourceClusterInput);
-                resourceClusterInput.SetPosition(-70, -55, 0);
-                resourceClusterInput.SetSize(120, 25);
-
-                cityClusterLabel = Factories.CreateGuiLabel();
-                primaryPanel.Add(cityClusterLabel);
-                cityClusterLabel.SetPosition(70, -35, 0);
-                cityClusterLabel.SetSize(120, 25);
-                cityClusterLabel.SetText("City Cluster");
-
-                cityClusterInput = Factories.CreateGuiLabel();
-                primaryPanel.Add(cityClusterInput);
-                cityClusterInput.SetPosition(70, -55, 0);
-                cityClusterInput.SetSize(120, 25);
-
                 characterNameLabel = Factories.CreateGuiLabel();
                 primaryPanel.Add(characterNameLabel);
-                characterNameLabel.SetPosition(70, -85, 0);
+                characterNameLabel.SetPosition(70, -35, 0);
                 characterNameLabel.SetSize(125, 25);
                 characterNameLabel.SetText("Character Name");
 
                 characterNameInput = Factories.CreateGuiInputField();
                 primaryPanel.Add(characterNameInput);
-                characterNameInput.SetPosition(70, -105, 0);
+                characterNameInput.SetPosition(70, -55, 0);
                 characterNameInput.SetSize(125, 25);
 
                 setVaultAreaButton = Factories.CreateGuiButton();
                 primaryPanel.Add(setVaultAreaButton);
-                setVaultAreaButton.SetPosition(-70, -85, 0);
+                setVaultAreaButton.SetPosition(-70, -35, 0);
                 setVaultAreaButton.SetSize(125, 25);
                 setVaultAreaButton.SetText("Set Vault Loc.");
                 setVaultAreaButton.AddActionListener((e) =>
@@ -364,7 +330,7 @@ namespace Ennui.Script.Official
                         var loc = local.ThreadSafeLocation;
                         var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set vault loc to " + loc.X + " " + loc.Y + " " + loc.Z);
-                        cityClusterInput.SetText(Game.ClusterName);
+                        config.CityClusterName = Game.ClusterName;
                         config.VaultDest = new SafeVector3(new Vector3f(loc.X, loc.Y, loc.Z));
                         config.VaultArea = new SafeMapArea(Game.Cluster.Name, new Area(area.Start, area.End));
                     }
@@ -372,7 +338,7 @@ namespace Ennui.Script.Official
 
                 setRepairAreaButton = Factories.CreateGuiButton();
                 primaryPanel.Add(setRepairAreaButton);
-                setRepairAreaButton.SetPosition(-70, -115, 0);
+                setRepairAreaButton.SetPosition(-70, -65, 0);
                 setRepairAreaButton.SetSize(125, 25);
                 setRepairAreaButton.SetText("Set Repair Loc.");
                 setRepairAreaButton.AddActionListener((e) =>
@@ -383,7 +349,7 @@ namespace Ennui.Script.Official
                         var loc = local.ThreadSafeLocation;
                         var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set repair loc to " + loc.X + " " + loc.Y + " " + loc.Z);
-                        cityClusterInput.SetText(Game.ClusterName);
+                        config.CityClusterName = Game.ClusterName;
                         config.RepairDest = new SafeVector3(new Vector3f(loc.X, loc.Y, loc.Z));
                         config.RepairArea = new SafeMapArea(Game.ClusterName, new Area(area.Start, area.End));
                     }
@@ -391,7 +357,7 @@ namespace Ennui.Script.Official
 
                 addRoamPointButton = Factories.CreateGuiButton();
                 primaryPanel.Add(addRoamPointButton);
-                addRoamPointButton.SetPosition(-70, -145, 0);
+                addRoamPointButton.SetPosition(-70, -95, 0);
                 addRoamPointButton.SetSize(125, 25);
                 addRoamPointButton.SetText("Add Roam Point");
                 addRoamPointButton.AddActionListener((e) =>
@@ -401,14 +367,14 @@ namespace Ennui.Script.Official
                     {
                         var loc = local.ThreadSafeLocation;
                         Logging.Log("Add roam point " + loc.X + " " + loc.Y + " " + loc.Z);
-                        resourceClusterInput.SetText(Game.ClusterName);
+                        config.ResourceClusterName = Game.ClusterName;
                         config.RoamPoints.Add(new SafeVector3(new Vector3f(loc.X, loc.Y, loc.Z)));
                     }
                 });
 
                 runButton = Factories.CreateGuiButton();
                 primaryPanel.Add(runButton);
-                runButton.SetPosition(0, -175, 0);
+                runButton.SetPosition(0, -140, 0);
                 runButton.SetSize(125, 25);
                 runButton.SetText("Run");
                 runButton.AddActionListener((e) =>
