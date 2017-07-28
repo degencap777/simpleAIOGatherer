@@ -131,6 +131,7 @@ namespace Ennui.Script.Official
                 .ExcludeByArea(territoryAreas.ToArray())
                 .FilterByTypeSet(SafeTypeSet.BatchConvert(config.TypeSetsToUse))
                 .FilterWithSetupState(HarvestableSetupState.Invalid)
+                .FilterWithSetupState(HarvestableSetupState.Owned)
                 .Closest(center);
 
             if (mobTarget != null && harvestableTarget != null)
