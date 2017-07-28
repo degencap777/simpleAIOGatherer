@@ -25,6 +25,8 @@ namespace Ennui.Script.Official
         public bool FleeOnLowHealth = true;
         public int FleeHealthPercent = 30;
 
+        public float MaxHoldWeight = 100.0f;
+
         public List<SafeTypeSet> TypeSetsToUse = new List<SafeTypeSet>();
         public List<SafeVector3> RoamPoints = new List<SafeVector3>();
     }

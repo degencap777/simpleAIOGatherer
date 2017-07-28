@@ -33,7 +33,7 @@ namespace Ennui.Script.Official
                 {
                     parent.EnterState("repair");
                 }
-                else if (localPlayer.TotalHoldWeight >= 99)
+                else if (localPlayer.TotalHoldWeight >= config.MaxHoldWeight)
                 {
                     parent.EnterState("bank");
                 }

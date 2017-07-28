@@ -416,5 +416,19 @@ namespace Ennui.Script.Official
 
             return true;
         }
+
+        public override int OnLoop(IScriptEngine se)
+        {
+            var lpo = Players.LocalPlayer;
+            if (lpo != null)
+            {
+                var max = lpo.MaxCarryWeight;
+                if (max >= config.MaxHoldWeight)
+                {
+                    config.MaxHoldWeight = max;
+                }
+            }
+            return 100;
+        }
     }
 }

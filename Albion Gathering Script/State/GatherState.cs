@@ -187,25 +187,6 @@ namespace Ennui.Script.Official
             return useMount;
         }
 
-        private float GetWeightThreshold()
-        {
-            var weightThreshold = 98;
-            if (Equipment.HasItemContainingName("_MOUNT_HORSE"))
-            {
-                weightThreshold = 130;
-            }
-            else if (Equipment.HasItemContainingName("UNIQUE_MOUNT_CART_STARTERPACK"))
-            {
-                weightThreshold = 1880;
-            }
-            else if (Equipment.HasItemContainingName("_MOUNT_OX"))
-            {
-                weightThreshold = 450;
-            }
-
-            return weightThreshold;
-        }
-
         public override int OnLoop(IScriptEngine se)
         {
             if (config.RepairDest != null && Api.HasBrokenItems())
@@ -247,8 +228,8 @@ namespace Ennui.Script.Official
                 return 0;
             }
 
-            var heldWeight = localPlayer.WeighedDownPercent;
-            if (heldWeight >= GetWeightThreshold())
+            var heldWeight = localPlayer.TotalHoldWeight;
+            if (heldWeight >= config.MaxHoldWeight)
             {
                 Logging.Log("Local player has too much weight, banking!", LogLevel.Atom);
                 parent.EnterState("bank");
@@ -392,6 +373,19 @@ namespace Ennui.Script.Official
                     config.UseWeb = false;
                     config.Point = mobTarget.ThreadSafeLocation;
                     config.UseMount = ShouldUseMount(heldWeight, dist);
+                    config.ExitHook = (() =>
+                    {
+                        var lpo = Players.LocalPlayer;
+                        if (lpo == null) return false;
+
+                        if (!lpo.IsMounted && lpo.IsUnderAttack)
+                        {
+                            parent.EnterState("combat");
+                            return true;
+                        }
+
+                        return false;
+                    });
 
                     if (Movement.PathFindTo(config) == PathFindResult.Failed)
                     {
