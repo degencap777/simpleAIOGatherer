@@ -294,14 +294,14 @@ namespace Ennui.Script.Official
 
                 killMobsCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(killMobsCheckBox);
-                killMobsCheckBox.SetPosition(-70, 0, 0);
+                killMobsCheckBox.SetPosition(-70, -5, 0);
                 killMobsCheckBox.SetSize(125, 25);
                 killMobsCheckBox.SetText("Kill Mobs");
                 killMobsCheckBox.SetSelected(true);
 
                 autoLoginCheckbox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(autoLoginCheckbox);
-                autoLoginCheckbox.SetPosition(60, 0, 0);
+                autoLoginCheckbox.SetPosition(60, -5, 0);
                 autoLoginCheckbox.SetSize(125, 25);
                 autoLoginCheckbox.SetText("Auto Relogin");
                 autoLoginCheckbox.SetSelected(true);
