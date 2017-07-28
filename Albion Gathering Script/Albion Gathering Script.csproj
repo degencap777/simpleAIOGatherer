@@ -59,6 +59,7 @@
     <Compile Include="GatheringScript.cs" />
     <Compile Include="State\GatherState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="State\LoginState.cs" />
     <Compile Include="State\RepairState.cs" />
     <Compile Include="State\ResolveState.cs" />
   </ItemGroup>

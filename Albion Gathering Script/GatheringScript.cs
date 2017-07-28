@@ -44,6 +44,11 @@ namespace Ennui.Script.Official
             context = new Context();
             timer = new Timer();
 
+            AddHook(() =>
+            {
+                return LoginWindow.IsOpen || CharacterSelectWindow.IsOpen;
+            });
+
             AddState("config", new ConfigState(config, context));
             AddState("resolve", new ResolveState(config, context));
             AddState("gather", new GatherState(config, context));
