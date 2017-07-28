@@ -27,6 +27,12 @@ namespace Ennui.Script.Official
 
         public float MaxHoldWeight = 100.0f;
 
+        public bool GatherWood = false;
+        public bool GatherOre = false;
+        public bool GatherFiber = false;
+        public bool GatherHide = false;
+        public bool GatherStone = false;
+       
         public List<SafeTypeSet> TypeSetsToUse = new List<SafeTypeSet>();
         public List<SafeVector3> RoamPoints = new List<SafeVector3>();
     }

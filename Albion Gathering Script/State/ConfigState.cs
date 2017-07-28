@@ -20,8 +20,8 @@ namespace Ennui.Script.Official
         private ICheckBox harvestFiberCheckBox;
         private IInputField harvestHideInput;
         private ICheckBox harvestHideCheckBox;
-        private IInputField harvestRockInput;
-        private ICheckBox harvestRockCheckBox;
+        private IInputField harvestStoneInput;
+        private ICheckBox harvestStoneCheckBox;
 
         private ICheckBox killMobsCheckBox;
 
@@ -80,10 +80,16 @@ namespace Ennui.Script.Official
                 harvestOreInput.SetText(string.Join(",", sets[ResourceType.Ore].ToArray()));
 
             if (sets[ResourceType.Rock].Count > 0)
-                harvestRockInput.SetText(string.Join(",", sets[ResourceType.Rock].ToArray()));
+                harvestStoneInput.SetText(string.Join(",", sets[ResourceType.Rock].ToArray()));
 
             if (sets[ResourceType.Wood].Count > 0)
                 harvestWoodInput.SetText(string.Join(",", sets[ResourceType.Wood].ToArray()));
+
+            harvestWoodCheckBox.SetSelected(config.GatherWood);
+            harvestOreCheckBox.SetSelected(config.GatherOre);
+            harvestFiberCheckBox.SetSelected(config.GatherFiber);
+            harvestHideCheckBox.SetSelected(config.GatherHide);
+            harvestStoneCheckBox.SetSelected(config.GatherStone);
 
             killMobsCheckBox.SetSelected(config.AttackMobs);
             characterNameInput.SetText(config.LoginCharacterName);
@@ -182,9 +188,9 @@ namespace Ennui.Script.Official
                 AddTiers(ResourceType.Hide, harvestHideInput.GetText());
             }
 
-            if (harvestRockCheckBox.IsSelected())
+            if (harvestStoneCheckBox.IsSelected())
             {
-                AddTiers(ResourceType.Rock, harvestRockInput.GetText());
+                AddTiers(ResourceType.Rock, harvestStoneInput.GetText());
             }
 
             if (config.TypeSetsToUse.Count == 0)
@@ -192,6 +198,12 @@ namespace Ennui.Script.Official
                 context.State = "No type sets to gather!";
                 return;
             }
+
+            config.GatherWood = harvestWoodCheckBox.IsSelected();
+            config.GatherOre = harvestOreCheckBox.IsSelected();
+            config.GatherFiber = harvestFiberCheckBox.IsSelected();
+            config.GatherHide = harvestHideCheckBox.IsSelected();
+            config.GatherStone = harvestStoneCheckBox.IsSelected();
 
             config.AttackMobs = killMobsCheckBox.IsSelected();
             config.GatherArea = new SafeMapArea(config.ResourceClusterName, new Vector3f(-10000, -10000, -10000), new Vector3f(10000, 10000, 10000));
@@ -275,17 +287,17 @@ namespace Ennui.Script.Official
                 harvestHideCheckBox.SetText("Harvest Hide");
                 harvestHideCheckBox.SetSelected(true);
 
-                harvestRockInput = Factories.CreateGuiInputField();
-                primaryPanel.Add(harvestRockInput);
-                harvestRockInput.SetPosition(-70, 30, 0);
-                harvestRockInput.SetSize(120, 25);
+                harvestStoneInput = Factories.CreateGuiInputField();
+                primaryPanel.Add(harvestStoneInput);
+                harvestStoneInput.SetPosition(-70, 30, 0);
+                harvestStoneInput.SetSize(120, 25);
 
-                harvestRockCheckBox = Factories.CreateGuiCheckBox();
-                primaryPanel.Add(harvestRockCheckBox);
-                harvestRockCheckBox.SetPosition(60, 30, 0);
-                harvestRockCheckBox.SetSize(100, 25);
-                harvestRockCheckBox.SetText("Harvest Rock");
-                harvestRockCheckBox.SetSelected(true);
+                harvestStoneCheckBox = Factories.CreateGuiCheckBox();
+                primaryPanel.Add(harvestStoneCheckBox);
+                harvestStoneCheckBox.SetPosition(60, 30, 0);
+                harvestStoneCheckBox.SetSize(100, 25);
+                harvestStoneCheckBox.SetText("Harvest Stone");
+                harvestStoneCheckBox.SetSelected(true);
 
                 killMobsCheckBox = Factories.CreateGuiCheckBox();
                 primaryPanel.Add(killMobsCheckBox);
