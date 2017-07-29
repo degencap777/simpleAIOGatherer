@@ -46,7 +46,7 @@ namespace Ennui.Script.Official
 
             AddHook(() =>
             {
-                if (base.RunningKey != "login" && config.AutoRelogin && (LoginWindow.IsOpen || CharacterSelectWindow.IsOpen))
+                if (base.RunningKey != "login" && config.AutoRelogin && (LoginWindow.IsOpen || CharacterSelectWindow.IsOpen || LoginErrorWindow.IsOpen))
                 {
                     EnterState("login");
                 }
