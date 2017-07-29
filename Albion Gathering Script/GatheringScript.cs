@@ -1,5 +1,6 @@
 ﻿using Ennui.Api;
 using Ennui.Api.Direct.Object;
+using Ennui.Api.Meta;
 using Ennui.Api.Method;
 using Ennui.Api.Script;
 using System;
@@ -46,7 +47,7 @@ namespace Ennui.Script.Official
 
             AddHook(() =>
             {
-                if (RunningKey != "config" && RunningKey != "login" && config.AutoRelogin && (LoginWindow.IsOpen || CharacterSelectWindow.IsOpen || LoginErrorWindow.IsOpen))
+                if (RunningKey != "config" && RunningKey != "login" && Game.State != GameState.Playing && config.AutoRelogin && (LoginWindow.IsOpen || CharacterSelectWindow.IsOpen || LoginErrorWindow.IsOpen))
                 {
                     EnterState("login");
                 }
