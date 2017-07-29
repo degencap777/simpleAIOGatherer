@@ -21,9 +21,9 @@ namespace Ennui.Script.Official
 
         public override int OnLoop(IScriptEngine se)
         {
-            if ((!LoginWindow.IsOpen && !CharacterSelectWindow.IsOpen && !LoginErrorWindow.IsOpen) || Game.State == GameState.Playing)
+            if (!LoginWindow.IsOpen && !CharacterSelectWindow.IsOpen && !LoginErrorWindow.IsOpen)
             {
-                EnterState("gather");
+                parent.EnterState("gather");
                 return 0;
             }
 
