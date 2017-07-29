@@ -50,6 +50,7 @@
     <Compile Include="Serialization\SafeMapArea.cs" />
     <Compile Include="Serialization\SafeTypeSet.cs" />
     <Compile Include="Serialization\SafeVector3.cs" />
+    <Compile Include="StateMonitor.cs" />
     <Compile Include="State\BankState.cs" />
     <Compile Include="State\CombatState.cs" />
     <Compile Include="State\ConfigState.cs" />

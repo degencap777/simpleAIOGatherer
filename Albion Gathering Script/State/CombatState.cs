@@ -9,6 +9,7 @@ namespace Ennui.Script.Official
     {
         private Configuration config;
         private Context context;
+        private StateMonitor<ActionState> actionStateMonitor = new StateMonitor<ActionState>(5, ActionState.Idle);
 
         public CombatState(Configuration config, Context context)
         {
@@ -18,10 +19,12 @@ namespace Ennui.Script.Official
 
         private void HandleSpellRotation(ILocalPlayerObject self, IEntityObject target)
         {
-            if (self.CurrentActionState != ActionState.Idle)
+            if (!actionStateMonitor.Stamp(self.CurrentActionState))
             {
+                context.State = "Waiting for spell cast";
                 return;
             }
+
             context.State = "Casting spell!";
 
             var buffSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Buff).First;
