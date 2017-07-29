@@ -66,6 +66,12 @@ namespace Ennui.Script.Official
                 self.CastOnSelf(dmgSelfSpell.Slot);
             }
 
+            var dmgGroundSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Ground).FilterByCategory(SpellCategory.Damage).First;
+            if (dmgGroundSpell != null)
+            {
+                self.CastAt(dmgGroundSpell.Slot, target.ThreadSafeLocation);
+            }
+
             var crowdControlGroundSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Ground).FilterByCategory(SpellCategory.CrowdControl).First;
             if (crowdControlGroundSpell != null)
             {
