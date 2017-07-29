@@ -32,6 +32,7 @@ namespace Ennui.Script.Official
         private IButton setVaultAreaButton;
         private IButton setRepairAreaButton;
         private IButton addRoamPointButton;
+        private IButton removeRoamPointButton;
 
         private IButton runButton;
 
@@ -369,6 +370,29 @@ namespace Ennui.Script.Official
                         Logging.Log("Add roam point " + loc.X + " " + loc.Y + " " + loc.Z);
                         config.ResourceClusterName = Game.ClusterName;
                         config.RoamPoints.Add(new SafeVector3(new Vector3f(loc.X, loc.Y, loc.Z)));
+                    }
+                });
+
+                removeRoamPointButton = Factories.CreateGuiButton();
+                primaryPanel.Add(removeRoamPointButton);
+                removeRoamPointButton.SetPosition(60, -95, 0);
+                removeRoamPointButton.SetSize(125, 25);
+                removeRoamPointButton.SetText("Del Roam Point");
+                removeRoamPointButton.AddActionListener((e) =>
+                {
+                    var local = Players.LocalPlayer;
+                    if (local != null)
+                    {
+                        var loc = local.ThreadSafeLocation;
+                        Logging.Log("Delete roam point " + loc.X + " " + loc.Y + " " + loc.Z);
+                        for (var i = 0; i < config.RoamPoints.Count; i++)
+                        {
+                            if (config.RoamPoints[i].RealVector3().Expand(3, 3, 3).Contains(loc))
+                            {
+                                config.RoamPoints.RemoveAt(i);
+                                i -= 1;
+                            }
+                        }
                     }
                 });
 

@@ -71,25 +71,22 @@ namespace Ennui.Script.Official
             g.DrawString(string.Format("City cluster: {0}", config.CityClusterName), 20, 160);
             g.DrawString(string.Format("Resource cluster: {0}", config.ResourceClusterName), 20, 175);
 
-            if (config != null)
+            if (config.ResourceClusterName == Game.ClusterName)
             {
-                if (config.ResourceClusterName == Game.ClusterName)
+                foreach (var p in config.RoamPoints)
                 {
-                    foreach (var p in config.RoamPoints)
-                    {
-                        p.RealVector3().Expand(3, 3, 3).Render(Api, Color.Red, Color.Red.MoreTransparent());
-                    }
+                    p.RealVector3().Expand(3, 3, 3).Render(Api, Color.Red, Color.Red.MoreTransparent());
                 }
+            }
 
-                if (config.VaultArea != null && config.CityClusterName == Game.ClusterName)
-                {
-                    config.VaultArea.RealArea(Api).Render(Api, Color.Cyan, Color.Cyan.MoreTransparent());
-                }
+            if (config.VaultArea != null && config.CityClusterName == Game.ClusterName)
+            {
+                config.VaultArea.RealArea(Api).Render(Api, Color.Cyan, Color.Cyan.MoreTransparent());
+            }
 
-                if (config.RepairArea != null && config.CityClusterName == Game.ClusterName)
-                {
-                    config.RepairArea.RealArea(Api).Render(Api, Color.Purple, Color.Purple.MoreTransparent());
-                }
+            if (config.RepairArea != null && config.CityClusterName == Game.ClusterName)
+            {
+                config.RepairArea.RealArea(Api).Render(Api, Color.Purple, Color.Purple.MoreTransparent());
             }
         }
     }
