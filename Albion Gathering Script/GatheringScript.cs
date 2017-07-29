@@ -46,7 +46,11 @@ namespace Ennui.Script.Official
 
             AddHook(() =>
             {
-                return config.AutoRelogin && LoginWindow.IsOpen || CharacterSelectWindow.IsOpen;
+                if (base.RunningKey != "login" && config.AutoRelogin && LoginWindow.IsOpen || CharacterSelectWindow.IsOpen)
+                {
+                    EnterState("login");
+                }
+                return false;
             });
 
             AddState("config", new ConfigState(config, context));
@@ -55,6 +59,7 @@ namespace Ennui.Script.Official
             AddState("combat", new CombatState(config, context));
             AddState("repair", new RepairState(config, context));
             AddState("bank", new BankState(config, context));
+            AddState("login", new LoginState(config, context));
             EnterState("config");
             return base.OnStart(se);
         }
