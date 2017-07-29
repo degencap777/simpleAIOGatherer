@@ -92,6 +92,8 @@ namespace Ennui.Script.Official
                     self.CastOnSelf(healAllSpell.Slot);
                 }
             }
+
+            Time.SleepUntil(() => self.CurrentActionState != ActionState.Idle, 1200);
         }
 
         public override int OnLoop(IScriptEngine se)
