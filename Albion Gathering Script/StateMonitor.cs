@@ -1,34 +1,44 @@
-﻿using System;
+﻿using Ennui.Api;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ennui.Script.Official
 {
-    public class StateMonitor<T>
+    public class StateMonitor<T> : ApiResource
     {
         private readonly int iterationCount;
-        private readonly T expected;
+        private readonly T[] expected;
 
         private readonly List<T> timestamps = new List<T>();
 
-        public StateMonitor(int iterationCount, T expected)
+        public StateMonitor(IApi api, int iterationCount, params T[] expected) : base(api)
         {
             this.iterationCount = iterationCount;
             this.expected = expected;
         }
 
+        private bool IsExpected(T value)
+        {
+            foreach (var t in expected)
+            {
+                if (t.Equals(value))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public bool Stamp(T value)
         {
-            timestamps.Add(value);
             while (timestamps.Count >= iterationCount)
             {
                 timestamps.RemoveAt(0);
             }
+            timestamps.Add(value);
 
             foreach (var stamp in timestamps)
             {
-                if (!stamp.Equals(expected))
+                if (!IsExpected(stamp))
                 {
                     return false;
                 }

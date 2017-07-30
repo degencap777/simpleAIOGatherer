@@ -9,7 +9,7 @@ namespace Ennui.Script.Official
     {
         private Configuration config;
         private Context context;
-        private StateMonitor<ActionState> actionStateMonitor = new StateMonitor<ActionState>(5, ActionState.Idle);
+        private StateMonitor<ActionState> actionStateMonitor;
 
         public CombatState(Configuration config, Context context)
         {
@@ -101,8 +101,12 @@ namespace Ennui.Script.Official
                     self.CastOnSelf(healAllSpell.Slot);
                 }
             }
+        }
 
-            Time.SleepUntil(() => self.CurrentActionState != ActionState.Idle, 1200);
+        public override bool OnStart(IScriptEngine se)
+        {
+            actionStateMonitor = new StateMonitor<ActionState>(Api, 5, ActionState.Idle, ActionState.Attacking);
+            return base.OnStart(se);
         }
 
         public override int OnLoop(IScriptEngine se)
