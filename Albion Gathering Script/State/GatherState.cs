@@ -310,18 +310,23 @@ namespace Ennui.Script.Official
                     config.Target = harvestableTarget;
                     config.UseMount = ShouldUseMount(heldWeight, dist);
                     config.ExitHook = (() =>
-                     {
-                         var lpo = Players.LocalPlayer;
-                         if (lpo == null) return false;
+                    {
+                        var lpo = Players.LocalPlayer;
+                        if (lpo == null) return false;
 
-                         if (!lpo.IsMounted && lpo.IsUnderAttack)
-                         {
-                             parent.EnterState("combat");
-                             return true;
-                         }
+                        if (!lpo.IsMounted && lpo.IsUnderAttack)
+                        {
+                            parent.EnterState("combat");
+                            return true;
+                        }
 
-                         return false;
-                     });
+                        if (!harvestableTarget.IsValid || harvestableTarget.Depleted)
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    });
 
                     var result = Movement.PathFindTo(config);
                     if (result == PathFindResult.Failed)
@@ -382,6 +387,11 @@ namespace Ennui.Script.Official
                         if (!lpo.IsMounted && lpo.IsUnderAttack)
                         {
                             parent.EnterState("combat");
+                            return true;
+                        }
+
+                        if (!mobTarget.IsValid || mobTarget.CurrentHealth <= 0)
+                        {
                             return true;
                         }
 
