@@ -31,60 +31,70 @@ namespace Ennui.Script.Official
             if (buffSelfSpell != null)
             {
                 self.CastOnSelf(buffSelfSpell.Slot);
+                return;
             }
 
             var instantSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Instant).ExcludeWithName("ESCAPE_DUNGEON").First;
             if (instantSelfSpell != null)
             {
                 self.CastOnSelf(instantSelfSpell.Slot);
+                return;
             }
 
             var movBufSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.MovementBuff).First;
             if (movBufSelfSpell != null)
             {
                 self.CastOnSelf(movBufSelfSpell.Slot);
+                return;
             }
 
             var buffEnemySpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Enemy).FilterByCategory(SpellCategory.Buff).First;
             if (buffEnemySpell != null)
             {
                 self.CastOn(buffEnemySpell.Slot, target);
+                return;
             }
 
             var debuffEnemySpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Enemy).FilterByCategory(SpellCategory.Debuff).First;
             if (debuffEnemySpell != null)
             {
                 self.CastOn(debuffEnemySpell.Slot, target);
+                return;
             }
 
             var dmgEnemySpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Enemy).FilterByCategory(SpellCategory.Damage).First;
             if (dmgEnemySpell != null)
             {
                 self.CastOn(dmgEnemySpell.Slot, target);
+                return;
             }
 
             var dmgSelfSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Self).FilterByCategory(SpellCategory.Damage).First;
             if (dmgSelfSpell != null)
             {
                 self.CastOnSelf(dmgSelfSpell.Slot);
+                return;
             }
 
             var dmgGroundSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Ground).FilterByCategory(SpellCategory.Damage).First;
             if (dmgGroundSpell != null)
             {
                 self.CastAt(dmgGroundSpell.Slot, target.ThreadSafeLocation);
+                return;
             }
 
             var crowdControlGroundSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Ground).FilterByCategory(SpellCategory.CrowdControl).First;
             if (crowdControlGroundSpell != null)
             {
                 self.CastAt(crowdControlGroundSpell.Slot, target.ThreadSafeLocation);
+                return;
             }
 
             var crowdControlEnemySpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.Enemy).FilterByCategory(SpellCategory.CrowdControl).First;
             if (crowdControlEnemySpell != null)
             {
                 self.CastOn(crowdControlEnemySpell.Slot, target);
+                return;
             }
 
             if (self.HealthPercentage <= 50)
@@ -93,19 +103,21 @@ namespace Ennui.Script.Official
                 if (healSelfSpell != null)
                 {
                     self.CastOnSelf(healSelfSpell.Slot);
+                    return;
                 }
 
                 var healAllSpell = self.SpellChain.FilterByReady().FilterByTarget(SpellTarget.All).FilterByCategory(SpellCategory.Heal).First;
                 if (healAllSpell != null)
                 {
                     self.CastOnSelf(healAllSpell.Slot);
+                    return;
                 }
             }
         }
 
         public override bool OnStart(IScriptEngine se)
         {
-            actionStateMonitor = new StateMonitor<ActionState>(Api, 5, ActionState.Idle, ActionState.Attacking);
+            actionStateMonitor = new StateMonitor<ActionState>(Api, 7, ActionState.Idle, ActionState.Attacking);
             return base.OnStart(se);
         }
 
@@ -156,7 +168,7 @@ namespace Ennui.Script.Official
                 HandleSpellRotation(localPlayer, targ);
             }
 
-            return 100;
+            return 200;
         }
     }
 }
