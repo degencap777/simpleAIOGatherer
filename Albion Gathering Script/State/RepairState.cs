@@ -29,7 +29,7 @@ namespace Ennui.Script.Official
                 context.State = "Walking to repair area...";
 
                 var config = new PointPathFindConfig();
-                config.ClusterName = this.config.CityClusterName;
+                config.ClusterName = this.config.RepairClusterName;
                 config.Point = this.config.RepairDest.RealVector3();
                 config.UseWeb = false;
                 config.UseMount = true;

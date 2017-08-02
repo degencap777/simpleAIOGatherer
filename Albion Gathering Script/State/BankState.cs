@@ -31,7 +31,7 @@ namespace Ennui.Script.Official
                 context.State = "Walking to vault...";
 
                 var config = new PointPathFindConfig();
-                config.ClusterName = this.config.CityClusterName;
+                config.ClusterName = this.config.VaultClusterName;
                 config.UseWeb = false;
                 config.Point = this.config.VaultDest.RealVector3();
                 config.UseMount = true;

@@ -72,14 +72,15 @@ namespace Ennui.Script.Official
         public override void OnPaint(IScriptEngine se, GraphicContext g)
         {
             g.SetColor(new Color(0.3f, 0.3f, 0.3f, 1.0f));
-            g.FillRect(15, 100, 265, 195);
+            g.FillRect(15, 100, 265, 210);
             g.SetColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
             g.DrawString("http://ennui.ninja - Simple AIO Gatherer", 20, 100);
             g.DrawString(string.Format("Runtime: {0}", Time.FormatElapsed(timer.ElapsedMs)), 20, 115);
             g.DrawString(string.Format("State: {0}", context.State), 20, 130);
             g.DrawString(string.Format("Max hold weight: {0}", config.MaxHoldWeight), 20, 145);
-            g.DrawString(string.Format("City cluster: {0}", config.CityClusterName), 20, 160);
-            g.DrawString(string.Format("Resource cluster: {0}", config.ResourceClusterName), 20, 175);
+            g.DrawString(string.Format("Bank cluster: {0}", config.VaultClusterName), 20, 160);
+            g.DrawString(string.Format("Repair cluster: {0}", config.RepairClusterName), 20, 175);
+            g.DrawString(string.Format("Resource cluster: {0}", config.ResourceClusterName), 20, 190);
 
             if (config.ResourceClusterName == Game.ClusterName)
             {
@@ -89,12 +90,12 @@ namespace Ennui.Script.Official
                 }
             }
 
-            if (config.VaultArea != null && config.CityClusterName == Game.ClusterName)
+            if (config.VaultArea != null && config.VaultClusterName == Game.ClusterName)
             {
                 config.VaultArea.RealArea(Api).Render(Api, Color.Cyan, Color.Cyan.MoreTransparent());
             }
 
-            if (config.RepairArea != null && config.CityClusterName == Game.ClusterName)
+            if (config.RepairArea != null && config.RepairClusterName == Game.ClusterName)
             {
                 config.RepairArea.RealArea(Api).Render(Api, Color.Purple, Color.Purple.MoreTransparent());
             }

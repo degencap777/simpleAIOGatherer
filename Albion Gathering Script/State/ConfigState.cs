@@ -200,7 +200,7 @@ namespace Ennui.Script.Official
             config.AttackMobs = killMobsCheckBox.IsSelected();
             config.AutoRelogin = autoLoginCheckbox.IsSelected();
             config.LoginCharacterName = characterNameInput.GetText();
-            config.GatherArea = new SafeMapArea(config.ResourceClusterName, new Vector3f(-10000, -10000, -10000), new Vector3f(10000, 10000, 10000));
+            config.ResourceArea = new SafeMapArea(config.ResourceClusterName, new Vector3f(-10000, -10000, -10000), new Vector3f(10000, 10000, 10000));
             if (autoLoginCheckbox.IsSelected())
             {
                 config.LoginCharacterName = characterNameInput.GetText();
@@ -331,7 +331,7 @@ namespace Ennui.Script.Official
                         var loc = local.ThreadSafeLocation;
                         var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set vault loc to " + loc.X + " " + loc.Y + " " + loc.Z);
-                        config.CityClusterName = Game.ClusterName;
+                        config.VaultClusterName = Game.ClusterName;
                         config.VaultDest = new SafeVector3(new Vector3f(loc.X, loc.Y, loc.Z));
                         config.VaultArea = new SafeMapArea(Game.Cluster.Name, new Area(area.Start, area.End));
                     }
@@ -350,7 +350,7 @@ namespace Ennui.Script.Official
                         var loc = local.ThreadSafeLocation;
                         var area = loc.Expand(4, 2, 4);
                         Logging.Log("Set repair loc to " + loc.X + " " + loc.Y + " " + loc.Z);
-                        config.CityClusterName = Game.ClusterName;
+                        config.RepairClusterName = Game.ClusterName;
                         config.RepairDest = new SafeVector3(new Vector3f(loc.X, loc.Y, loc.Z));
                         config.RepairArea = new SafeMapArea(Game.ClusterName, new Area(area.Start, area.End));
                     }

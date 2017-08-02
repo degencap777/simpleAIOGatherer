@@ -6,14 +6,16 @@ namespace Ennui.Script.Official
 {
     public class Configuration
     {
-        public string CityClusterName = "";
+        public SafeMapArea ResourceArea;
         public string ResourceClusterName = "";
 
-        public SafeMapArea GatherArea;
         public SafeMapArea VaultArea;
-        public SafeMapArea RepairArea;
         public SafeVector3 VaultDest;
+        public string VaultClusterName = "";
+      
+        public SafeMapArea RepairArea;
         public SafeVector3 RepairDest;
+        public string RepairClusterName = "";
 
         public bool AutoRelogin = false;
         public string LoginCharacterName = "";

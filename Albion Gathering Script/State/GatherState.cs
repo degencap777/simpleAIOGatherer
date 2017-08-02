@@ -212,7 +212,7 @@ namespace Ennui.Script.Official
             }
 
             var localLocation = localPlayer.ThreadSafeLocation;
-            if (!config.GatherArea.RealArea(Api).Contains(localLocation))
+            if (!config.ResourceArea.RealArea(Api).Contains(localLocation))
             {
                 context.State = "Walking to gather area...";
                 Logging.Log("Local player not in gather area, walk there!", LogLevel.Atom);
