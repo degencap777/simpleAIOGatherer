@@ -30,14 +30,17 @@ namespace Ennui.Script.Official
 
         public bool Stamp(T value)
         {
+            Logging.Log("Add: " + value);
+            timestamps.Add(value);
             while (timestamps.Count >= iterationCount)
             {
                 timestamps.RemoveAt(0);
             }
-            timestamps.Add(value);
+            Logging.Log("Timestamp count: " + timestamps.Count);
 
             foreach (var stamp in timestamps)
             {
+                Logging.Log("Timestamp val: " + stamp);
                 if (!IsExpected(stamp))
                 {
                     return false;
