@@ -1,6 +1,6 @@
-﻿using Ennui.Api;
-using Ennui.Api.Method;
+﻿using Ennui.Api.Method;
 using Ennui.Api.Script;
+using Ennui.Api.Util;
 
 namespace Ennui.Script.Official
 {
@@ -67,9 +67,9 @@ namespace Ennui.Script.Official
 
                 building.Click();
                 Time.SleepUntil(() =>
-                  {
-                      return RepairWindow.IsOpen;
-                  }, 4000);
+                {
+                    return RepairWindow.IsOpen;
+                }, 4000);
             }
 
             if (RepairWindow.IsOpen)

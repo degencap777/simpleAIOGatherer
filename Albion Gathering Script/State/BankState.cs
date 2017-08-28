@@ -1,7 +1,7 @@
 ﻿using Ennui.Api;
-using Ennui.Api.Direct;
 using Ennui.Api.Method;
 using Ennui.Api.Script;
+using Ennui.Api.Util;
 using System.Collections.Generic;
 
 namespace Ennui.Script.Official
